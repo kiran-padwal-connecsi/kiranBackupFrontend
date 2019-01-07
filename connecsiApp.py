@@ -97,6 +97,28 @@ def privacy_policy():
 def registerBrand():
     return render_template('user/registerFormBrand.html')
 
+
+@connecsiApp.route('/forgotPassword')
+def forgotPassword():
+    return render_template('user/forgotPassword.html')
+
+@connecsiApp.route('/resetemail', methods=['GET','POST'])
+def resetemail():
+    if request.method == 'POST':
+        payload = request.form.to_dict()
+        email_id = payload.get('reset_email')
+        url = base_url + '/Messages/ForgotPassword/' + str(email_id)
+        # print(payload)
+        try:
+            response = requests.post(url, json=payload)
+            print(response.json())
+            print('email sent')
+        except:
+            pass
+        flash("Email sent successfully", 'success')
+        return render_template("user/login.html")
+
+
 @connecsiApp.route('/saveBrand',methods=['GET','POST'])
 def saveBrand():
     if request.method == 'POST':
