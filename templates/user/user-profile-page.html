@@ -66,13 +66,19 @@
                                     <b style="font-weight:450;">Username:</b> &nbsp;
                                     <span class="display-block overflow-hidden">{{data['data']['first_name'] }} {{data['data']['last_name'] }} </span>
                                 </div>
+                                <!--<div class="row" style="margin-bottom: 5px;">-->
+                                    <!--<b style="font-weight:450;">Role:</b> &nbsp;-->
+                                    <!--<span class="display-block overflow-hidden">{% if data['data']['role'] == '' %}-->
+                                                                                    <!--Admin-->
+                                                                                    <!--{% else %}-->
+                                                                                    <!--{{ data['data']['role'] }}-->
+                                                                                    <!--{% endif %} </span>-->
+                                <!--</div>-->
                                 <div class="row" style="margin-bottom: 5px;">
-                                    <b style="font-weight:450;">Role:</b> &nbsp;
-                                    <span class="display-block overflow-hidden">{% if data['data']['role'] == '' %}
-                                                                                    Admin
-                                                                                    {% else %}
-                                                                                    {{ data['data']['role'] }}
-                                                                                    {% endif %} </span>
+                                    <b style="font-weight:450;">Position:</b> &nbsp;
+                                    <span class="display-block overflow-hidden">
+                                        {{ data['data']['position'] }}
+                                    </span>
                                 </div>
                                 <div class="row" style="margin-bottom: 5px;">
                                     <b style="font-weight:450;">Telephone:</b> &nbsp;
