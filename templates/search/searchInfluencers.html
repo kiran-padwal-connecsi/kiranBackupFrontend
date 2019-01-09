@@ -431,7 +431,7 @@ $( document ).ready(function() {
 	        {% if form_filters['min_lower'] and form_filters['max_upper'] %}
             start: [{{ form_filters['min_lower'] }}, {{ form_filters['max_upper'] }}],
             {% else %}
-            start: [0,10000000],
+            start: [0,100000000],
             {% endif %}
 	        behaviour: 'tap-drag',
 	        tooltips: false,
