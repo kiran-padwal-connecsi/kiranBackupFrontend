@@ -1505,7 +1505,7 @@ def exportCsv(data):
     print('my data = ', data)
     print(os.getcwd())
     cwd = os.getcwd()
-    with open('/home/kiranpadwalconnecsi/connecsi_frontend_final/infList.csv', mode='w') as csv_file:
+    with open(cwd+'/infList.csv', mode='w') as csv_file:
     # with open(cwd+'/infList.csv', mode='w') as csv_file:
         fieldnames = ['Channel Name', 'Total Followers', 'Avg Views/video','Avg Likes/video','Avg Comments/video']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
