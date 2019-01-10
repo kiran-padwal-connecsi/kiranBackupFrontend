@@ -141,7 +141,7 @@
           <div class="row" style="margin-left: 2%;">
             <div class="col-xl-4 col-lg-4 col-md-4 mb-1">
               {% if data['data'] %}
-              <a href={{ url_for('exportCsv', data=data) }}><button type="button" d style="background-color: purple; margin-left: 2%; color:white; border-radius: 10px; font-size:15px;">Export CSV</button></a>
+              <a href=""><button type="button"  style="background-color: purple; margin-left: 2%; color:white; border-radius: 10px; font-size:15px;">Export CSV</button></a>
               {% else %}
               <!--<button type="button"  style="background-color: purple; margin-left: 2%; color:white; border-radius: 10px; font-size:15px;">Export CSV</button>-->
               {% endif %}
@@ -442,7 +442,7 @@ $( document ).ready(function() {
 		    'min': [ 0 ],
 		    <!--'10%': [ 500, 500 ],-->
 		    <!--'50%': [ 4000, 1000 ],-->
-		    'max': [ 1000000 ]
+		    'max': [ 100000000 ]
 	        },
 	        format: {
                 from: function(value) {

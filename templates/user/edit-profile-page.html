@@ -137,7 +137,11 @@
                                             <label for="business_sector">*Business Sector:</label>
                                             <!--<input type="text" id="business_sector" required name="business_sector" class="form-control" value="{{data['data']['business_sector']}}" placeholder="Business Sector" style="width:400px;"> </span>-->
                                             <select id="business_sector" required name="business_sector" class="form-control"  style="width:400px;">
+                                                {% if data['data']['business_sector'] %}
+                                                <option value="{{data['data']['business_sector']}}">{{data['data']['business_sector']}}</option>
+                                                {% else %}
                                                 <option value=""></option>
+                                                {% endif %}
                                                 <option value="Aerospace Industry">Aerospace Industry</option>
                                                 <option value="Fishing Industry">Fishing Industry</option>
                                                 <option value="Timber Industry">Timber Industry</option>
@@ -159,6 +163,12 @@
                                             <label for="no_of_employees">*No. of Employees:</label>
                                             <!--<input type="text" id="no_of_employees" required name="no_of_employees" class="form-control" value="{{data['data']['no_of_employees']}}" style="width:400px;"> </span>-->
                                             <select id="no_of_employees" required name = "no_of_employees" class="form-control" value="{{data['data']['no_of_employees']}}" style="width:400px;">
+                                                {% if data['data']['no_of_employees'] %}
+                                                <option value="{{data['data']['no_of_employees']}}">{{data['data']['no_of_employees']}}</option>
+                                                {% else %}
+                                                <option value=""></option>
+                                                {% endif %}
+
                                                 <option value="0-10">0-10</option>
                                                 <option value="10-20">10-20</option>
                                                 <option value="20+">20+</option>

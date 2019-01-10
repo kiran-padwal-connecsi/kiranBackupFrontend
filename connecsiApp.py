@@ -16,7 +16,7 @@ from flask_uploads import UploadSet, configure_uploads, IMAGES
 
 connecsiApp = Flask(__name__)
 connecsiApp.secret_key = 'connecsiSecretKey'
-base_url = 'https://kiranpadwaltestconnecsi.pythonanywhere.com/api/'
+base_url = 'https://kiranpadwaltestconnecsi.pythonanywhere.com/Apis/'
 
 
 
@@ -377,6 +377,7 @@ def searchInfluencers():
                     category_id = cat['video_cat_id']
             form_filters = request.form.to_dict()
             print('post form filters =',form_filters)
+            # exit()
             if form_filters['country']:
                 url_country_name = base_url + 'Youtube/regionCode/'+form_filters['country']
                 try:
@@ -487,7 +488,7 @@ def searchInfluencers():
             form_filters = {'channel': 'Youtube', 'string_word': '', 'country': 'PL', 'min_lower': '0', 'max_upper': '21200', 'search_inf': '', 'sort_order': 'High To Low', 'country_name': 'Poland'}
         except:
             pass
-
+        exportCsv(data=data)
         return render_template('search/searchInfluencers.html', regionCodes=regionCodes_json,
                                lookup_string=lookup_string,form_filters=form_filters,data=data,pagination='',view_campaign_data=view_campaign_data,
                                favInfList_data=favInfList_data)
@@ -1500,46 +1501,20 @@ def saveClassified():
         flash('Unauthorized', 'danger')
 
 
-@connecsiApp.route('/exportCsv')
-def exportCsv():
-    si = StringIO()
-    cw = csv.writer(si)
-    strList = request.args.get('data')
+def exportCsv(data):
+    print('my data = ', data)
+    print(os.getcwd())
+    cwd = os.getcwd()
+    with open('/home/kiranpadwalconnecsi/connecsi_frontend_final/infList.csv', mode='w') as csv_file:
+    # with open(cwd+'/infList.csv', mode='w') as csv_file:
+        fieldnames = ['Channel Name', 'Total Followers', 'Avg Views/video','Avg Likes/video','Avg Comments/video']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
 
-    strList = strList.replace("'", "\"")
-    strList = strList.replace('{"data', '')
-    strList = strList.replace(": [", "{")
-    strList = strList.replace('\'s', '')
-    strList = strList.replace(']}', '"')
-    # strList = re.sub(r"^'", '"', strList)
-    # strList = re.sub(r"'$", '"', strList)
-
-    import ast
-    # a = ast.literal_eval(strList)
-    # a = json.loads(strList)
-    # print("type of ", type(a))
-    s = json.dumps(strList)
-    # s=s.encode("utf-8")
-    # print(s)
-    # cw.writerow(strList[0])  # header row
-    count = 0;
-
-    for emp in s:
-
-        if count == 0:
-            header = emp
-
-            cw.writerow(header)
-
-            count += 1
-
-        cw.writerow(emp)
-
-    output = make_response(si.getvalue())
-    output.headers["Content-Disposition"] = "attachment; filename=export.csv"
-    output.headers["Content-type"] = "text/csv"
-    return output
-
+        # writer.writerow(myDict)
+        for item in data['data']:
+            # print(item['title'])
+            writer.writerow({'Channel Name': item['title'], 'Total Followers': item['subscriberCount_gained'], 'Avg Views/video': item['total_100video_views']/100,'Avg Likes/video':item['total_100video_likes']/100,'Avg Comments/video':item['total_100video_comments']/100})
 
 @connecsiApp.route('/viewAllClassifiedAds',methods=['GET','POST'])
 @is_logged_in
