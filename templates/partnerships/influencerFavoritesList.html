@@ -1,6 +1,17 @@
 {% extends 'dashboard_layout_new.html' %}
 {{ super() }}
 {% block body %}
+<style>
+    .icon-a {
+    color: #888;
+}
+</style>
+<div class="row">
+    <div class="col-sm-12">
+        <a class="btn btn-sm" style="background-color:#9E57DD;color:white;" type="button" href="#">Youtube</a>
+        <a class="btn btn-sm" style="background-color:#9E57DD;color:white;" type="button" href="#">Twitter</a>
+    </div>
+</div>
 <div class="row">
   <div class="col-sm-12">
     <div class="card">
@@ -9,7 +20,7 @@
           <div class="row" style="margin-left: 2%;">
             <div class="col-xl-4 col-lg-4 col-md-4 mb-1">
               {% if data['data'] %}
-              <a href="/home/kiranLocalBackup/connecsiFrontendBackup/infList.csv" download><button type="button"  style="background-color: purple; margin-left: 2%; color:white; border-radius: 10px; font-size:15px;">Export CSV</button></a>
+              <a href="/home/kiranLocalBackup/connecsiFrontendBackup/infList.csv" download><button type="button"  style="background-color: #9E57DD; margin-left: 2%; color:white; border-radius: 10px; font-size:15px;">Export CSV</button></a>
               {% else %}
               <!--<button type="button"  style="background-color: purple; margin-left: 2%; color:white; border-radius: 10px; font-size:15px;">Export CSV</button>-->
               {% endif %}
@@ -37,7 +48,7 @@
                     <tr>
                       <td rowspan="3" style="border-left:solid 1px white;">
                         <span data-toggle="modal" data-target="#sendMessage">
-                        <a  onclick="sendMessage('{{ item['channel_id'] }}','{{ item['business_email'] }}')" class="fa fa-envelope purple" data-toggle="tooltip"  title="Message" style="position: relative; z-index: 1; font-size:25px;"></a>
+                        <a  onclick="sendMessage('{{ item['channel_id'] }}','{{ item['business_email'] }}')" class="fa fa-envelope " data-toggle="tooltip"  title="Message" style="position: relative; z-index: 1; font-size:25px; color:#9E57DD;"></a>
                         </span>
                           <br>
                         <span data-toggle="modal" data-target="#campaignList">
@@ -60,7 +71,7 @@
                       <td colspan="2" style="border-right: solid 1px #E1DEDD;">
                         <table width="400px" cellpadding="1">
                           <tr>
-                            <td colspan="2"><b style="font-size:15px;"><a href="https://www.youtube.com/channel/{{ item['channel_id'] }}" target="_blank">{{ item['title'] }}</a></b> <i class="fa fa-youtube font-medium-3 purple"></i></td>
+                            <td colspan="2"><b style="font-size:15px;"><a href="https://www.youtube.com/channel/{{ item['channel_id'] }}" target="_blank">{{ item['title'] }}</a></b> <i class="fa fa-youtube font-medium-3" style="color:#9E57DD;"></i></td>
                           </tr>
                           <tr>
                             <td style="text-align:center;border-right: solid 1px #E1DEDD; border-bottom:solid 1px #E1DEDD; border-top:solid 1px #E1DEDD; font-size:14px;">
@@ -89,13 +100,13 @@
                           <tr><td colspan="2">
                             <b style="font-size:12px">Other Channels</b> &emsp;
                             {% if item['facebook_url'] %}
-                            <a href="{{ item['facebook_url'] }}" target="_blank" class="fa fa-facebook-official purple" style="font-size:20px;"></a>&emsp;
+                            <a href="{{ item['facebook_url'] }}" target="_blank" class="fa fa-facebook-official" style="font-size:20px; color:#9E57DD;"></a>&emsp;
                             {% endif %}
                             {% if item['insta_url'] %}
-                            <a href="{{ item['insta_url'] }}" target="_blank" class="fa fa-instagram purple" style="font-size:20px;"></a>&emsp;
+                            <a href="{{ item['insta_url'] }}" target="_blank" class="fa fa-instagram " style="font-size:20px;color:#9E57DD;"></a>&emsp;
                             {% endif %}
                             {% if item['twitter_url'] %}
-                            <a href="{{ item['twitter_url'] }}" target="_blank" class="fa fa-twitter-square purple" style="font-size:20px;"></a>&emsp;
+                            <a href="{{ item['twitter_url'] }}" target="_blank" class="fa fa-twitter-square " style="font-size:20px;color:#9E57DD;"></a>&emsp;
                             {% endif %}
                           </td></tr>
                         </table>
