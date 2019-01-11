@@ -1388,7 +1388,16 @@ def influencerFavoritesList():
         for item in data['data']:
             item.update({'linechart_id': linechart_id})
             linechart_id += 1
-        return render_template('partnerships/influencerFavoritesList.html',data=data)
+        from templates.campaign import campaign
+        campaignObj = campaign.Campaign(user_id=user_id)
+        view_campaign_data = campaignObj.get_all_campaigns()
+        print('i m n search')
+
+        url = base_url + '/Brand/getInfluencerFavList/' + str(user_id)
+        response = requests.get(url=url)
+        favInfList_data = response.json()
+        exportCsv(data=data)
+        return render_template('partnerships/influencerFavoritesList.html',data=data,favInfList_data=favInfList_data,view_campaign_data=view_campaign_data)
     except:
         pass
         return render_template('partnerships/influencerFavoritesList.html')
@@ -1563,6 +1572,19 @@ def getChannelStatusForCampaign(channel_id):
         return jsonify(results=response_json['data'])
     except Exception as e:
         print(e)
+
+
+@connecsiApp.route('/delFavInf/<string:channel_id>/<string:user_id>',methods=['GET'])
+def delFavInf(channel_id,user_id):
+        print(channel_id)
+        url = base_url+'Brand/deleteFromFavList/'+ str(channel_id) + '/' + str(user_id)
+        print(url)
+        response = requests.post(url=url)
+        response = response.json()
+        print(response)
+        if response['response']==1:
+            return 'Influencer Removed From Favourite List'
+        else: return 'Server Error'
 
 
 @connecsiApp.route('/reports')
