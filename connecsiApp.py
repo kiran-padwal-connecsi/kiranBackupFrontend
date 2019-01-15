@@ -856,10 +856,31 @@ def saveCampaign():
         flash('Unauthorized', 'danger')
 
 
-@connecsiApp.route('/calenderView')
+@connecsiApp.route('/calendarView',methods=['GET'])
 @is_logged_in
 def calendarView():
-    return render_template('campaign/calenderView.html')
+    user_id = session['user_id']
+    from templates.campaign.campaign import Campaign
+    campaignObj = Campaign(user_id=user_id)
+    campaign_data = campaignObj.get_all_campaigns()
+    print(campaign_data)
+
+    for item in campaign_data['data']:
+        item['from_date'] = datetime.datetime.strptime(item['from_date'],'%d-%b-%y').date().strftime('%Y-%m-%d')
+        item['to_date'] = datetime.datetime.strptime(item['to_date'], '%d-%b-%y').date().strftime('%Y-%m-%d')
+        if item['campaign_status'] == 'New':
+           item.update({'color':'#393FDB'})
+        elif item['campaign_status'] == 'Queued':
+            item.update({'color': '#FE831A'})
+        elif item['campaign_status'] == 'Active':
+           item.update({'color':'#48E552'})
+        elif item['campaign_status'] == 'Finished':
+           item.update({'color':'#F30636'})
+        elif item['campaign_status'] == 'InActive':
+           item.update({'color':'#929292'})
+
+    print(campaign_data)
+    return render_template('campaign/calenderView.html',campaign_data=campaign_data)
 
 @connecsiApp.route('/inbox/<string:message_id>',methods = ['GET'])
 @is_logged_in

@@ -15,7 +15,7 @@ $(document).ready(function(){
 	*				Default				*
 	************************************/
 	$('#fc-default').fullCalendar({
-		defaultDate: '2016-06-12',
+		defaultDate: '2019-01-15',
 		editable: true,
 		eventLimit: true, // allow "more" link when too many events
 		events: [

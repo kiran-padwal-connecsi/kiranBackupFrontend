@@ -2,44 +2,80 @@
 {{ super() }}
 {% block body %}
 
+<!--<link rel='stylesheet' href='fullcalendar/fullcalendar.css' />-->
+<!--<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='app-assets/fullcalendar_my/fullcalendar.css') }}">-->
+<!--<script src='lib/jquery.min.js'></script>-->
+<!--<script src='lib/moment.min.js'></script>-->
+<!--<script src="{{ url_for('static', filename='app-assets/fullcalendar_my/lib/moment.min.js') }}" type="text/javascript"></script>-->
+<!--<script src='fullcalendar/fullcalendar.js'></script>-->
 
+<!--<script src="{{ url_for('static', filename='app-assets/fullcalendar_my/fullcalendar.js') }}" type="text/javascript"></script>-->
+<style>
+    .fc-month-button{
+    background-color: #b1d583 !important;
+    background-image:none !important;
+
+}
+.fc-prev-button{
+    background-color: #2253D8 !important;
+}
+.fc-next-button{
+    background-color: #2253D8 !important;
+}
+.fc-today-button{
+    background-color: #2253D8 !important;
+}
+
+.fc-left{
+    color: #11D2DA !important;
+}
+
+</style>
 <div class="row">
-    <div class="col-sm-12">
-        <div class="card">
-            <div class="card-body">
-                <div class="card-block">
-                    <div>
-                        <ul class="tabrow">
-                            <li >All Campaigns</li>
-                            <li>New Campaign</li>
-                            <li class="selected" >Calendar View</li>
-                        </ul>
+        <div class="col-sm-12">
+            <div class="card">
+                <div class="card-header" style="color:#50A9E4; text-align:center;">
+                    <h4 class="card-title" >Calender</h4>
+                    {{data}}
+                </div>
+                <div class="card-body">
+                    <div class="card-block">
+                        <p class="card-text"></p>
+                        <div id='calendar'></div>
                     </div>
-                    <hr>
-        <iframe src="https://calendar.google.com/calendar/embed?height=600&amp;wkst=1&amp;bgcolor=%23FFFFFF&amp;src=uhkka37t2ainhksfqa6isfndes%40group.calendar.google.com&amp;color=%235229A3&amp;ctz=Asia%2FCalcutta" style="border-width:0" width="800" height="600" frameborder="0" scrolling="no"></iframe>
                 </div>
             </div>
         </div>
-    </div>
-</div>
-    <style>
-        div.scroll {
-            height: 150px;
-            width: 150px;
-            overflow-y: auto;
-        }
-        .tabrow {
+	</div>
+<script>
 
-            list-style: none;
-            margin: 0;
-            padding: 0;
-            line-height: 24px;
-        }
-        .tabrow li {
-            padding: 0 10px;
-            border: 1px solid #AAA;
-            background: #ECECEC;
-            display: inline-block;
-        }
-    </style>
-    {% endblock %}
+    $(function() {
+
+  // page is now ready, initialize the calendar...
+
+  $('#calendar').fullCalendar({
+
+    <!--editable:true,-->
+    header:{
+     <!--left:'prev,next today',-->
+     <!--center:'title',-->
+     <!--right:'month,agendaWeek,agendaDay'-->
+    },
+    events: [
+    {% for item in campaign_data['data'] %}
+    {
+      title  : '{{ item['campaign_name'] }}',
+      start  : '{{ item['from_date'] }}',
+      end    : '{{ item['to_date'] }}',
+      color  : '{{ item['color'] }}'
+    },
+    {% endfor %}
+
+  ]
+    // put your options and callbacks here
+  })
+
+});
+
+</script>
+{% endblock %}
