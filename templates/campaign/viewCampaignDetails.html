@@ -150,21 +150,23 @@
                                     {% for youtube_inf_data in view_campaign_details_data['data'][0]['youtube_inf_data'] %}
                                     <tr>
                                         <td>
-                                            <img src="{{ youtube_inf_data['channel_img'] }}" class="rounded-circle img-border gradient-summer width-50">
+                                            <img  src="{{ youtube_inf_data['channel_img'] }}" class="dropdown rounded-circle img-border gradient-summer width-50">
+                                            <div class="submenu"  style="display: None">
+                                                <a data-toggle="tooltip" title="Message" href="/compose"><i class="fa fa-envelope"></i></a>
+                                                <a data-toggle="tooltip" title="Add Report" href="/addBrandsReport/{{ youtube_inf_data['channel_id'] }}"><img src="/static/icons/writing.png" height="14px" width="13px"></a>
+                                                <a data-toggle="tooltip" title="Payment" href="/payInf/{{ youtube_inf_data['channel_id'] }}"><img src="/static/icons/payment-method.png" height="14px" width="13px"></a>
+                                            </div>
 
-                                            <a class='danger' data-placement='above' title="Popover Title" href='#'>Click</a>
-<div id="popover_content_wrapper" style="display: none">
-  <div>This is your div content</div>
-</div>
                                             <a class="collapsed" data-toggle="collapse" data-target="#{{ youtube_inf_data['channel_id'] }}">
                                                 {{ youtube_inf_data['title'] }}
                                             </a>
 
-                                            <div ><a href="/compose"><i class="fa fa-envelope"></i></a></div>
+                                            <!--<div ></div>-->
                                             <div id="{{ youtube_inf_data['channel_id'] }}" class="collapse" data-parent="#{{ youtube_inf_data['channel_id'] }}">
-                                                Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
+                                                Anim pariatur cliche reprehenderit
                                             </div>
                                         </td>
+
                                         <td></td>
                                         <td></td>
                                         <td >$1500</td>
@@ -223,13 +225,27 @@
 </script>
 <script>
 $(document).ready(function(){
-    <!--$('[data-toggle="popover"]').popover();-->
-    $('.danger').popover({
-    html : true,
-    content: function() {
-      return $('#popover_content_wrapper').html();
-    }
+    <!--&lt;!&ndash;$('[data-toggle="popover"]').popover();&ndash;&gt;-->
+    <!--$('.danger').popover({-->
+    <!--html : true,-->
+    <!--content: function() {-->
+      <!--return $('#popover_content_wrapper').html();-->
+    <!--}-->
+  <!--});-->
+});
+
+
+$(document).ready(function(){
+    $(".dropdown").mouseover(function(){
+    <!--$(".submenu").show();-->
+    $(this).next().toggleClass().show();
+  });
+
+  $(".submenu").mouseleave(function(){
+    <!--$(".submenu").hide();-->
+    $(this).toggleClass().hide();
   });
 });
+
 </script>
 {% endblock %}
