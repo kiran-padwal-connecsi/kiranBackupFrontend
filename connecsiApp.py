@@ -603,7 +603,7 @@ def editCampaign(campaign_id):
             item['kpis'] = item['kpis'].replace(' ', '')
     except Exception as e:
         print(e)
-    return render_template('campaign/edit_CampaignForm.html', view_campaign_details_data=view_campaign_details_data,
+    return render_template('campaign/edit_campaignForm.html', view_campaign_details_data=view_campaign_details_data,
                            regionCodes=regionCodes_json, videoCategories=videoCat_json)
 
 
