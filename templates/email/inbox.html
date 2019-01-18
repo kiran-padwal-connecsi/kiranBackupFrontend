@@ -590,7 +590,7 @@ function getProposal(message_id,campaign_id){
                         $('#view_proposal_price').empty();
                         $('#view_proposal_price').append('Price : '+val.proposal_price+' '+val.currency);
                         $('#view_proposal_target_url').empty();
-                        $('#view_proposal_target_url').append('Target Url : '+val.proposal_price+' '+val.currency);
+                        $('#view_proposal_target_url').append('Target Url : '+val.target_url);
 
                         $('#viewProposal').modal('show');
 
@@ -824,7 +824,8 @@ function getAllMappedChannel_ids(channel_id){
                    $("#proposalList").empty();
                    $('#proposal_campaign_name').append('<option value=""></option>');
                    jQuery.each(data.results, function(i, val) {
-                        <!--alert(val.campaign_name);-->
+                        alert(val.campaign_name);
+                        alert(val.status);
                         {% if  glob.from_email_id != session['email_id']  %}
                             if(val.status == 'Proposal Sent'){
                                 var status = 'Proposal Received';

@@ -2,14 +2,10 @@
 {{ super() }}
 {% block body %}
 
-
 <div class="card">
     <div class="card-body">
         <div class="table-responsive" style="background-color: white;">
-            <div>
-                <button type="button">All Campaigns</button>
-                <button type="button">Calendar</button>
-            </div>
+            <div>Deleted Campaigns List</div>
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -28,25 +24,14 @@
                 {% for item in view_campaign_data %}
                 <tr>
                     <td>
-                        <a href="/viewCampaignDetails/{{ item['campaign_id'] }}">{{ item['campaign_name'] }}</a>
-                        {% if item['status'] == 'Proposal Sent' %}
-                        <!--{{ item['status'] }}-->
-
-                        {% elif item['status'] == 'Current Partner' %}
-                        <!--{{ item['status'] }}-->
-
-                        {% else %}
-                        <a href="/editCampaign/{{ item['campaign_id'] }}"><img src="static/icons/edit.png" height="14px" width="13px"></a>
-                        <a href="/deleteCampaign/{{ item['campaign_id'] }}"><img src="static/icons/delete.png" height="14px" width="13px"></a>
-                        {% endif %}
-
+                        <a  href="/viewCampaignDetails/{{ item['campaign_id'] }}">{{ item['campaign_name'] }}</a>
+                        <!--<a href="/editCampaign/{{ item['campaign_id'] }}"><img src="static/icons/edit.png" height="14px" width="13px"></a>-->
+                        <!--<a href="/deleteCampaign/{{ item['campaign_id'] }}"><img src="static/icons/delete.png" height="14px" width="13px"></a>-->
                     </td>
-
                     <td>
                         <span class="{{ item['campaign_status'] }}" data-toggle="tooltip" title="{{ item['campaign_status'] }}"></span>
                         <!--{{ item['campaign_status'] }}-->
                     </td>
-
                     <td>{{ item['from_date'] }}</td>
                     <td>{{ item['to_date'] }}</td>
                     <td>
@@ -70,7 +55,7 @@
                     </td>
                     <td>{{ item['no_of_influencers'] }}
                         <span class="float-right text muted">
-                                <a onclick="searchInfluencers('{{ item['campaign_name'] }}','{{ item['campaign_id'] }}','{{ item['channels'] }}','{{ item['video_cat_name'] }}','{{ item['min_lower_followers'] }}','{{ item['max_upper_followers'] }}','{{ item['regions'] }}')" class="fa fa-user-plus black" data-toggle="modal" data-target="#create_alert_modal" data-tooltip="true" title="Add Influencer" style="font-size:20px;"></a>
+                                <!--<a onclick="searchInfluencers('{{ item['campaign_name'] }}','{{ item['campaign_id'] }}','{{ item['channels'] }}','{{ item['video_cat_name'] }}','{{ item['min_lower_followers'] }}','{{ item['max_upper_followers'] }}','{{ item['regions'] }}')" class="fa fa-user-plus black" data-toggle="modal" data-target="#create_alert_modal" data-tooltip="true" title="Add Influencer" style="font-size:20px;"></a>-->
                             <!--<button class="btn btn-sm btn-outline-secondary fa fa-user-plus"></button>-->
                         </span>
                     </td>

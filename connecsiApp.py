@@ -1,4 +1,5 @@
 import datetime
+import re
 from functools import wraps
 import json
 from io import StringIO
@@ -569,15 +570,185 @@ def addCampaign():
     return render_template('campaign/add_campaignForm.html',regionCodes=regionCodes_json,videoCategories = videoCat_json)
 
 
+@connecsiApp.route('/editCampaign/<string:campaign_id>',methods=['GET'])
+@is_logged_in
+def editCampaign(campaign_id):
+    url_regionCodes = base_url + 'Youtube/regionCodes'
+    regionCodes_json = ''
+    try:
+        regionCodes_response = requests.get(url=url_regionCodes)
+        regionCodes_json = regionCodes_response.json()
+        print(regionCodes_json)
+    except:
+        pass
+    url_videoCat = base_url + 'Youtube/videoCategories'
+    videoCat_json = ''
+    try:
+        response_videoCat = requests.get(url=url_videoCat)
+        videoCat_json = response_videoCat.json()
+        print(videoCat_json)
+    except Exception as e:
+        print(e)
+    print(campaign_id)
+    user_id = session['user_id']
+    from templates.campaign.campaign import Campaign
+    campaignObj = Campaign(user_id=user_id, campaign_id=campaign_id)
+    view_campaign_details_data = campaignObj.get_campaign_details()
+    for item in view_campaign_details_data['data']:
+        item['from_date'] = datetime.datetime.strptime(item['from_date'],'%d-%b-%y').date()
+        item['to_date'] = datetime.datetime.strptime(item['to_date'], '%d-%b-%y').date()
+        item['arrangements'] = item['arrangements'].replace('/', '')
+        item['arrangements'] = item['arrangements'].replace(' ', '')
+        item['kpis'] = item['kpis'].replace(' ', '')
+    return render_template('campaign/edit_CampaignForm.html', view_campaign_details_data=view_campaign_details_data,
+                           regionCodes=regionCodes_json, videoCategories=videoCat_json)
+
+
+
+@connecsiApp.route('/updateCampaign',methods=['POST'])
+@is_logged_in
+def updateCampaign():
+    if request.method == 'POST':
+        payload = request.form.to_dict()
+        # print('payload = ',payload)
+        campaign_id = request.form.get('campaign_id')
+        # exit
+        del payload['campaign_id']
+        # print(payload)
+        # print(campaign_id)
+        # exit()
+        channels = request.form.getlist('channels')
+        channels_string = ','.join(channels)
+        payload.update({'channels':channels_string})
+        regions = request.form.getlist('country')
+        regions_string = ','.join(regions)
+        payload.update({'regions':regions_string})
+
+
+        arrangements = request.form.getlist('arrangements')
+        arrangements_string = ','.join(arrangements)
+        payload.update({'arrangements': arrangements_string})
+
+        kpis = request.form.getlist('kpis')
+        kpis_string = ','.join(kpis)
+        payload.update({'kpis': kpis_string})
+
+        is_classified_post = request.form.get('is_classified_post')
+        # print('is classified = ',is_classified_post)
+        try:
+            del payload['country']
+            del payload['is_classified_post']
+        except:pass
+        if is_classified_post == 'on':
+            payload.update({'is_classified_post':'TRUE'})
+        else:
+            payload.update({'is_classified_post':'FALSE'})
+        files = request.files.getlist("campaign_files")
+        # print(files)
+        # exit()
+        filenames=[]
+        for file in files:
+            filename = campaign_files.save(file)
+            filenames.append(filename)
+
+
+        user_id = session['user_id']
+        url_campaign = base_url + 'Campaign/' + str(campaign_id) + '/' + str(user_id)
+        response_campaign = requests.get(url=url_campaign)
+        result_json_campaign = response_campaign.json()
+        # print('cam data',result_json_campaign)
+
+        for item in result_json_campaign['data']:
+            files_string = item['files']
+            print(files_string)
+            if files_string:
+               filenames.append(files_string)
+
+        filenames_string = ','.join(filenames)
+        print('file name string', filenames_string)
+        payload.update({'files': filenames_string})
+
+        print('last payload',payload)
+        # exit()
+        url = base_url + 'Campaign/'+str(campaign_id)+'/' + str(user_id)
+        print(url)
+        try:
+            response = requests.put(url=url, json=payload)
+            result_json = response.json()
+            print(result_json)
+            flash('Updated Campaign', 'success')
+            return viewCampaigns()
+        except Exception as e:
+            print(e)
+            flash('campaign didnt saved Please try again later','danger')
+            pass
+    else:
+        flash('Unauthorized', 'danger')
+
+
+@connecsiApp.route('/deleteCampaign/<string:campaign_id>',methods=['GET'])
+@is_logged_in
+def deleteCampaign(campaign_id):
+    print(campaign_id)
+    user_id= session['user_id']
+    url = base_url + 'Campaign/' + str(campaign_id) + '/' + str(user_id)
+    print(url)
+    try:
+        response = requests.delete(url=url)
+        result_json = response.json()
+        print(result_json)
+        res = requests.put(url=base_url + 'Campaign/update_campaign_status/' + str(campaign_id) + '/' + 'InActive')
+        flash('Deleted Campaign', 'success')
+        return viewCampaigns()
+    except Exception as e:
+        print(e)
+        flash('Please try again later', 'danger')
+        pass
+
+@connecsiApp.route('/deletedCampaigns',methods=['GET','POST'])
+@is_logged_in
+def deletedCampaigns():
+    user_id=session['user_id']
+    # import templates
+    from templates.campaign.campaign import Campaign
+    campaignObj = Campaign(user_id=user_id)
+    # campaignObj = templates.campaign.campaign.Campaign(user_id=user_id)
+    view_campaign_data = campaignObj.get_all_campaigns()
+    deleted_campaign_list = []
+    for item in view_campaign_data['data']:
+        if item['deleted'] =='true':
+            deleted_campaign_list.append(item)
+
+    print(deleted_campaign_list)
+    return render_template('campaign/deleted_campaigns.html',view_campaign_data=deleted_campaign_list)
+
 
 @connecsiApp.route('/viewCampaigns',methods=['GET','POST'])
 @is_logged_in
 def viewCampaigns():
     user_id=session['user_id']
-    import templates
-    campaignObj = templates.campaign.campaign.Campaign(user_id=user_id)
+    # import templates
+    from templates.campaign.campaign import Campaign
+    campaignObj = Campaign(user_id=user_id)
+    # campaignObj = templates.campaign.campaign.Campaign(user_id=user_id)
     view_campaign_data = campaignObj.get_all_campaigns()
-    return render_template('campaign/viewCampaigns.html',view_campaign_data=view_campaign_data)
+    view_campaign_data_list = []
+    for item in view_campaign_data['data']:
+        if item['deleted'] !='true':
+            view_campaign_data_list.append(item)
+    print(view_campaign_data_list)
+    for item1 in view_campaign_data_list :
+        campaign_id = item1['campaign_id']
+        channel_status_campaign = requests.get(url=base_url+'Campaign/channel_status_for_campaign_by_campaign_id/'+ str(campaign_id))
+        print(channel_status_campaign.json())
+        channel_status_campaign_json = channel_status_campaign.json()
+        try:
+            item1.update({'status':channel_status_campaign_json['data'][0]['status']})
+        except:
+            item1.update({'status':''})
+            pass
+    print(view_campaign_data_list)
+    return render_template('campaign/viewCampaigns.html',view_campaign_data=view_campaign_data_list)
 
 @connecsiApp.route('/getCampaigns',methods=['GET','POST'])
 @is_logged_in
@@ -595,6 +766,20 @@ def viewCampaignDetails(campaign_id):
     from templates.campaign.campaign import Campaign
     campaignObj = Campaign(user_id=user_id,campaign_id=campaign_id)
     view_campaign_details_data = campaignObj.get_campaign_details()
+    # print('my data',view_campaign_details_data)
+    campaign_status = 'Queued'
+    for item in view_campaign_details_data['data']:
+        if item['campaign_status'] == 'Active':
+            print(item['campaign_status'])
+        elif item['campaign_status'] == 'Finished':
+            print(item['campaign_status'])
+        elif item['campaign_status'] == 'InActive':
+            print(item['campaign_status'])
+        elif item['campaign_status'] == 'Queued':
+            print(item['campaign_status'])
+        elif item['campaign_status'] == 'New':
+            resposnse = requests.put(url=base_url + 'Campaign/update_campaign_status/' + str(campaign_id) + '/' + str(campaign_status))
+
     return render_template('campaign/viewCampaignDetails.html',view_campaign_details_data=view_campaign_details_data)
 
 @connecsiApp.route('/getCampaignDetails/<string:campaign_id>',methods=['GET'])

@@ -10,6 +10,7 @@ class Campaign:
         self.url_view_campaigns = base_url + 'Campaign/' + str(self.user_id)
         self.url_view_campaign_details = base_url + 'Campaign/' + str(self.campaign_id) + '/' + str(self.user_id)
         self.url_getYoutubeInfList = base_url + 'Brand/getYoutubeInfList/'
+        self.url_update_campaign_status = base_url + 'Campaign/update_campaign_status/'
 
     def get_all_campaigns(self):
         view_campaign_data = ''
@@ -29,7 +30,7 @@ class Campaign:
                     except:
                         pass
                 cat_response = requests.get(url=base_url + 'Youtube/videoCategories/' + str(item['video_cat_id']))
-                # print(cat_response.json())
+
                 cat_json_data = cat_response.json()
                 video_cat_name = cat_json_data['data'][0]['video_cat_name']
                 item.update({'video_cat_name': video_cat_name})
@@ -52,6 +53,43 @@ class Campaign:
                 except Exception as e:
                     print(e)
             print('campaign data', view_campaign_data)
+            now = datetime.datetime.now()
+            today_date = now.strftime("%d-%b-%y")
+            print('today is ',today_date)
+            print('today is ', type(today_date))
+            for item in view_campaign_data['data']:
+                print(type(item['from_date']))
+                from_date = datetime.datetime.strptime(str(item['from_date']), '%d-%b-%y')
+                print('from date =',from_date)
+                to_date = datetime.datetime.strptime(str(item['to_date']), '%d-%b-%y')
+                print('to date =', to_date)
+                todays_date = datetime.datetime.strptime(str(today_date), '%d-%b-%y')
+                print('todays date =', todays_date)
+                if  from_date <= todays_date <= to_date :
+                    print('i m between')
+                    if item['campaign_status'] == 'InActive':
+                       print(item['campaign_status'])
+                    elif item['campaign_status'] == 'Finished':
+                       print(item['campaign_status'])
+                    elif item['campaign_status'] == 'New':
+                       res = requests.put(url=self.url_update_campaign_status+'/'+str(item['campaign_id'])+'/'+'Active')
+                    elif item['campaign_status'] == 'Queued':
+                       res = requests.put(url=self.url_update_campaign_status+'/'+str(item['campaign_id'])+'/'+'Active')
+
+                elif todays_date >= to_date :
+                    print('i m expired')
+                    if item['campaign_status'] == 'InActive' :
+                       print(item['campaign_status'])
+                    elif item['campaign_status'] == 'New':
+                       print(item['campaign_status'])
+                       res = requests.put(url=self.url_update_campaign_status + '/' + str(item['campaign_id']) + '/' + 'Finished')
+                    elif item['campaign_status'] == 'Queued':
+                       print(item['campaign_status'])
+                       res = requests.put(url=self.url_update_campaign_status + '/' + str(item['campaign_id']) + '/' + 'Finished')
+                    elif item['campaign_status'] == 'Active':
+                       print(item['campaign_status'])
+                       res = requests.put(url=self.url_update_campaign_status + '/' + str(item['campaign_id']) + '/' + 'Finished')
+
             return view_campaign_data
         except Exception as e:
             print(e)
