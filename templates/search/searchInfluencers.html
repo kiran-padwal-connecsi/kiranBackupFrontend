@@ -554,10 +554,17 @@ $( document ).ready(function() {
               {% for item in view_campaign_data['data'] %}
               <tr>
                 <td>
-                  <input class="form-control campaign_id{{ item['campaign_id'] }}" type="checkbox"  multiple id="campaign_id" value="{{ item['campaign_id'] }}" name="campaign_id">
+
+                  <input  class="form-control campaign_id{{ item['campaign_id'] }}" type="checkbox"  multiple id="campaign_id" value="{{ item['campaign_id'] }}" name="campaign_id">
+
+
+
                 </td>
                 <td><a href="/viewCampaignDetails/{{ item['campaign_id'] }}">{{ item['campaign_name'] }}</a></td>
-                <td>Cell</td>
+                <td>
+                        <span class="{{ item['campaign_status'] }}" data-toggle="tooltip" title="{{ item['campaign_status'] }}"></span>
+                        <!--{{ item['campaign_status'] }}-->
+                    </td>
                 <td>{{ item['from_date'] }}- {{ item['to_date'] }}</td>
                 <td>
                   {% set channels = item['channels'].split(',') %}

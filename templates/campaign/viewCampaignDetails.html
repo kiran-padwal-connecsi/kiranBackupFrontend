@@ -2,7 +2,18 @@
 {{ super() }}
 {% block body %}
 
+<style>
+    .mystyle{
 
+    font-size:12px;
+    border:1px solid #8DC7ED;
+    text-align:center;
+    color:#707070;
+
+    }
+
+
+</style>
 <div class="row">
     <div class="col-sm-12">
         <div class="card">
@@ -11,46 +22,76 @@
                     <div>
                         <a href="/viewCampaigns"><b style="color: #9C27B0; font-weight:400; letter-spacing: 1px; font-size:15px; ">Back to List</b></a>
                         {% for item in view_campaign_details_data['data'] %}
-                        <span><p style="text-align: center;"><b style="font-size:20px; letter-spacing: 2px; font-weight: 500">{{ item['campaign_name'] }}</b>
-                            <br />Active
+                        <span><p style="text-align: center;"><b style="color:#11D2DA;font-size:20px; letter-spacing: 2px; font-weight: 500">{{ item['campaign_name'] }}</b>
+                            <br />{{ item['campaign_status'] }}
                         </p>
                         </span>
                     </div>
-                    <hr>
-                    <div class="container-fluid">
-                        <div class="row">
-                            <div class="col-sm-9 col-md-6" style="border-right: 2px solid #A7A3A2;">
+
+                    <div class="container-fluid" style="margin-bottom:15px;">
+                        <div class="row" style="box-shadow: 2px 2px 2px 0px lightgrey; ">
+                            <div class="col-sm-9 col-md-6">
                                 <div class="row">
-                                    <div class="col-sm-6 col-md-4"><b style="font-weight: 500;">Period</b>
+                                    <div class="col-sm-6 col-md-4 mystyle"><b>Period</b>
                                         <br />{{ item['from_date'] }} - {{ item['to_date'] }}
                                     </div>
-                                    <div class="col-sm-4 col-md-4"><b style="font-weight: 500">Channels</b>
+
+                                    <div class="col-sm-4 col-md-4 mystyle"><b>Countries</b>
+                                        <br />
+                                        {% for region_name in item['region_name_list'] %}
+                                        {{ region_name }},
+                                        {% endfor %}
+                                    </div>
+
+                                    <div class="col-sm-4 col-md-4 mystyle"><b>Channels</b>
                                         <br />
                                         {% set channels = item['channels'].split(',') %}
                                         {% for channel in channels %}
                                         {% if channel == 'youtube' %}
-                                        <a href="#" class="fa fa-youtube fa-lg red"></a>
+                                        <a href="#" class="fa fa-youtube fa-lg" style="color:#9E57DD ;"></a>
                                         {% elif channel == 'facebook' %}
-                                        <a href="#" class="fa fa-facebook fa-lg blue"></a>
+                                        <a href="#" class="fa fa-facebook fa-lg " style="color:#9E57DD ;"></a>
                                         {% elif channel == 'twitter' %}
-                                        <a href="#" class="fa fa-twitter fa-lg"></a>
+                                        <a href="#" class="fa fa-twitter fa-lg" style="color:#9E57DD ;"></a>
                                         {% elif channel == 'instagram' %}
-                                        <a href="#" class="fa fa-instagram fa-lg pink"></a>
+                                        <a href="#" class="fa fa-instagram fa-lg " style="color:#9E57DD ;"></a>
                                         {% endif %}
                                         {% endfor %}
                                     </div>
-                                    <div class="col-sm-4 col-md-4"><b style="font-weight: 500;">Budget</b>
-                                        <br />
-                                        <b style="font-weight: 400; font-size:15px;">{{ item['currency'] }} {{ item['budget'] }}</b> </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-sm-6 col-md-4 mystyle"><b>Budget</b><br />
+                                        {{ item['currency'] }} {{ item['budget'] }}
+
+                                    </div>
+                                    <div class="col-sm-4 col-md-4 mystyle"><b>Kpi's</b><br>
+                                        {{ item['kpis'] }}
+
+
+                                    </div>
+                                    <div class="col-sm-4 col-md-4 mystyle"><b>Influencers</b><br>
+                                        {{ item['no_of_influencers'] }}
+
+                                    </div>
                                 </div>
                                 <div class="row">
-                                    <div class="col-sm-6 col-md-4"><b style="font-weight: 500">Countries</b><br />
-                                        <b style="font-weight: 400; font-size:15px;">
-                                            {% for region_name in item['region_name_list'] %}
-                                            {{ region_name }},
-                                            {% endfor %}
-                                        </b> </div>
-                                    <div class="col-sm-4 col-md-4"><b style="font-weight: 500">Files</b><br>
+                                    <div class="col-sm-4 col-md-4 mystyle"><b>Categories</b>
+                                        <br />
+                                        <!--<i class="fa fa-link"></i><a href="{{ item['target_url'] }}" target="_blank">Target Url</a>-->
+                                        {{ item['video_cat_name'] }}
+                                    </div>
+
+                                    <div class="col-sm-6 col-md-4 mystyle"><b>Arrangements</b><br>
+                                        {% set arrangements = item['arrangements'].split(',') %}
+                                        {% for content_type in arrangements %}
+                                        <!--{{ content_type }}-->
+                                        {% endfor %}
+                                        {{item['arrangements']}}
+                                    </div>
+
+                                    <div class="col-sm-4 col-md-4 mystyle"><b>Attachments</b>
+                                        <br />
                                         {% set files = item['files'].split(',') %}
                                         {% for file in files %}
                                         {% set ext = file[-3:] %}
@@ -65,33 +106,19 @@
                                         </a>
                                         {% endfor %}
                                     </div>
-                                    <div class="col-sm-4 col-md-4"><b style="font-weight: 500">Target URL</b><br>
-                                        <i class="fa fa-link"></i><a href="{{ item['target_url'] }}" target="_blank">Target Url</a>
-                                    </div>
-                                </div>
-                                <div class="row">
-                                    <div class="col-sm-6 col-md-4"><b style="font-weight: 500">Content Type</b><br>
-                                        {% set arrangements = item['arrangements'].split(',') %}
-                                        {% for content_type in arrangements %}
-                                        <button type="button" style="font-size:10px;">{{ content_type }}</button>
-                                        {% endfor %}
-                                    </div>
-                                    <div class="col-sm-4 col-md-4"><b style="font-weight: 500">KPIs</b>
-                                        <br />
-                                        <b style="font-weight: 400; font-size:15px;"></b>{{ item['kpis'] }} </div>
-                                    <div class="col-sm-4 col-md-4"><b style="font-weight: 500">Influencers</b>
-                                        <br />{{ item['no_of_influencers'] }}</div>
+
                                 </div>
                             </div>
-                            <div class="col-sm-3 col-md-6">
-                                <p><b style="font-weight: 500">Description:</b></p>
+                            <div class="col-sm-3 col-md-6 mystyle" style="margin-left:-1px;">
+                                <b>Description:</b>
                                 <br>
-                                {{ item['campaign_description'] }}
+                                <p style="text-align:left; font-size:12px;">{{ item['campaign_description'] }}</p>
+
                             </div>
                         </div>
                     </div>
                     {% endfor %}
-                    <hr>
+
                     <div style="background-color: white;" class="table-responsive">
                         <!--<ul class="nav nav-tabs">-->
                             <!--{% set channels = view_campaign_details_data['data'][0]['channels'].split(',') %}-->
@@ -104,45 +131,45 @@
                         <!--<div class="tab-content">-->
 
                             <!--<div class="tab-pane container fade" id="youtube">-->
-                                <table class="table table-bordered table-striped table-hover" style="background-color: white;">
-                                    <tr>
-                                        <th><b style="font-weight: 500; font-size:15px;">Influencers</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Status</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Channels</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Cost</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Revenue</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Posts</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Views</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Clicks</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">New<br /> Users</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">Engagement %</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">CPA</b></th>
-                                        <th><b style="font-weight: 500; font-size:15px;">ROI</b></th>
+                                <table class="table table-bordered table-striped table-hover mystyle" style="background-color: white;">
+                                    <tr class="mystyle">
+                                        <th>Influencers</th>
+                                        <th>Status</th>
+                                        <th>Channels</th>
+                                        <th>Cost</th>
+                                        <th>Revenue</th>
+                                        <th>Posts</th>
+                                        <th>Views</th>
+                                        <th>Clicks</th>
+                                        <th>New Users</th>
+                                        <th>Engagement %</th>
+                                        <th>CPA</th>
+                                        <th>ROI</th>
                                     </tr>
 
                                     {% for youtube_inf_data in view_campaign_details_data['data'][0]['youtube_inf_data'] %}
                                     <tr>
                                         <td>
-                                            <img src="{{ youtube_inf_data['channel_img'] }}" class="rounded-circle img-border gradient-summer width-50">
+                                            <img data-toggle="popover" data-trigger="hover" data-content="<a href='#' >hello</a>" src="{{ youtube_inf_data['channel_img'] }}" class="rounded-circle img-border gradient-summer width-50">
                                             <a class="collapsed" data-toggle="collapse" data-target="#{{ youtube_inf_data['channel_id'] }}">
                                                 {{ youtube_inf_data['title'] }}
                                             </a>
-                                            <a href="/compose"><i class="fa fa-envelope"></i></a>
+                                            <div><a href="/compose"><i class="fa fa-envelope"></i></a></div>
                                             <div id="{{ youtube_inf_data['channel_id'] }}" class="collapse" data-parent="#{{ youtube_inf_data['channel_id'] }}">
                                                 Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch.
                                             </div>
                                         </td>
                                         <td></td>
                                         <td></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">$1500</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">$10000</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">10</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">10000</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">$20000</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">5000</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">0.45%</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">6.5</b></td>
-                                        <td ><b style="font-size:14px; font-weight:400;">%</b></td>
+                                        <td >$1500</td>
+                                        <td >$10000</td>
+                                        <td>10</td>
+                                        <td >10000</td>
+                                        <td>$20000</td>
+                                        <td>5000</td>
+                                        <td>0.45%</td>
+                                        <td>6.5</td>
+                                        <td>%</td>
                                     </tr>
                                     {% endfor %}
                                 </table>
@@ -187,5 +214,10 @@
             <!--&lt;!&ndash;$(this).closest().removeClass('active');&ndash;&gt;-->
         <!--});-->
     <!--});-->
+</script>
+<script>
+$(document).ready(function(){
+    $('[data-toggle="popover"]').popover();
+});
 </script>
 {% endblock %}
