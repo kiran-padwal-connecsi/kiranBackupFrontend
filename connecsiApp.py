@@ -594,12 +594,15 @@ def editCampaign(campaign_id):
     from templates.campaign.campaign import Campaign
     campaignObj = Campaign(user_id=user_id, campaign_id=campaign_id)
     view_campaign_details_data = campaignObj.get_campaign_details()
-    for item in view_campaign_details_data['data']:
-        item['from_date'] = datetime.datetime.strptime(item['from_date'],'%d-%b-%y').date()
-        item['to_date'] = datetime.datetime.strptime(item['to_date'], '%d-%b-%y').date()
-        item['arrangements'] = item['arrangements'].replace('/', '')
-        item['arrangements'] = item['arrangements'].replace(' ', '')
-        item['kpis'] = item['kpis'].replace(' ', '')
+    try:
+        for item in view_campaign_details_data['data']:
+            item['from_date'] = datetime.datetime.strptime(item['from_date'],'%d-%b-%y').date()
+            item['to_date'] = datetime.datetime.strptime(item['to_date'], '%d-%b-%y').date()
+            item['arrangements'] = item['arrangements'].replace('/', '')
+            item['arrangements'] = item['arrangements'].replace(' ', '')
+            item['kpis'] = item['kpis'].replace(' ', '')
+    except Exception as e:
+        print(e)
     return render_template('campaign/edit_CampaignForm.html', view_campaign_details_data=view_campaign_details_data,
                            regionCodes=regionCodes_json, videoCategories=videoCat_json)
 
