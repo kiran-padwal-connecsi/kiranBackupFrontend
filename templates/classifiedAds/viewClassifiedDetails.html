@@ -1,141 +1,155 @@
 {% extends 'dashboard_layout_new.html' %}
 {{ super() }}
 {% block body %}
-<head>
-    <style type="text/css">
-        .imgStyle
-        {
-            width:100px;
-            height:100px;
-            border:3px solid grey;
-        }
-    </style>
-</head>
 
-<div class="row" style="justify-content: center">
-    <div class="col-xl-12 col-lg-12  col-md-12 col-12">
-        <div class="card">
-            <div class="card-body" style="padding: 1%;">
-                <div class="row" style="margin-left:1%;">
-                    <a href="/viewAllClassifiedAds">Back To List</a>
-                </div>
-                {% for item in classified_details['data'] %}
-                <div class="row" style="margin:2%; margin-left:35%; font-size:25px;">
-                    {{ item['classified_name'] }}
-                </div>
-                <div class="row" style="margin:1%;">
-                    <div class="col-xl-5 col-lg-5 col-md-5 mb-1">
-                        {% set images = item['files'].split(',') %}
-                        <img id="mainImage" style="border:3px solid grey"
-                             src="../static/brands_classified_files/{{ images[0] }}" height="300px" width="300x"/>
-                        <br />
-                        <div id="divId" onclick="changeImageOnClick(event)">
+<style>
+    .title{
+      font-size:14px;
+      color:#11D2DA;
 
-                            {% for img in images %}
-                            <!--<img class="imgStyle" src="{{ url_for('static', filename='brands_classified_files/{{ img }}') }}" />-->
-                            <img class="imgStyle" src="../static/brands_classified_files/{{ img }}" />
-                            {% endfor %}
+    }
+.views{
+    font-size:10px;
+    color:grey;
+}
+.headers{
+font-size:12px;
+    color:#707070;
+    font-weight:bold;
+    text-align:center;
+}
+.image{
+height:261px !important;
+width:391px !important;
+
+}
+.icons{
+color:#9E57DD;
+}
+</style>
+
+<div class="container-fluid">
+    <div class="row">
+        {% for item in classified_details['data'] %}
+        {% set images = item['files'].split(',') %}
+        <div class="col-sm-12">
+            <div class="card shadow-sm p-1">
+                <div class="card-body bg-white">
+                    <div class="row">
+                        <div class="col-sm text-left"><a href="/viewAllClassifiedAds">Back</a></div>
+                        <div class="col-sm text-center title">{{ item['classified_name'] }}</div>
+                        <div class="col-sm text-right views"><i class="fa fa-eye"></i>{{item['no_of_views']}}</div>
+                    </div>
+                    <div class="row">
+                        <div class="col-sm text-left"></div>
+                        <div class="col-sm text-center"></div>
+                        <div class="col-sm text-right views">Posted on : Date</div>
+                    </div>
+                    <div class="row" style="margin-right:12px;">
+                        <div class="col-sm">
+                            <div class="container-gallery">
+                                <img src="/static/images/gallary/1.jpg" class="image ">
+                                <img src="/static/images/gallary/2.jpg" class="image ">
+                                <img src="/static/images/gallary/3.jpg" class="image ">
+                                <img src="/static/images/gallary/4.jpg" class="image ">
+                                <img src="/static/images/gallary/6.jpg" class="image ">
+                                <img src="/static/images/gallary/5.jpg" class="image ">
+                            </div>
                         </div>
-                        <button type="button" style="font-size:12px; margin-left:35%; margin-top:2%; background-color:#7CE85F; color:white;"><a href="#">Reply</a></button>
-                    </div>
-                    <div class="col-xl-7 col-lg-7 col-md-7 mb-1">
-                        Interested in:
-                        <table style="margin-top:5%;" cellpadding="10" cellspacing="15">
-                            <tr>
-                                <td><b style="font-size:16px;">Channels</b> <br>
+                        <!--<div class="col-sm"></div>-->
+                        <div class="col-sm" style="padding:0px;">
+                            <div class="row">
+                                <div class="col-sm  title">influencer name ?
+
+                                </div>
+                                <div class="col-sm float-right text-right">
+                                    <a href="/editClassified/{{ item['classified_id'] }}" data-toggle="tooltip" title="Edit Classified"><img src="/static/icons/edit.png" height="19px" width="17px"></a>
+                                    <a href="/deleteClassified/{{ item['classified_id'] }}" id="" data-toggle="tooltip" title=" Delete Classified"><img src="/static/icons/delete.png" height="19px" width="17px"></a>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm border headers ">Channels<br>
                                     {% set channels = item['channels'].split(',') %}
-                                        {% for channel in channels %}
-                                        {% if channel == 'youtube' %}
-                                        <a href="#" class="fa fa-youtube fa-lg red"></a>
-                                        {% elif channel == 'facebook' %}
-                                        <a href="#" class="fa fa-facebook fa-lg blue"></a>
-                                        {% elif channel == 'twitter' %}
-                                        <a href="#" class="fa fa-twitter fa-lg"></a>
-                                        {% elif channel == 'instagram' %}
-                                        <a href="#" class="fa fa-instagram fa-lg pink"></a>
-                                        {% endif %}
-                                        {% endfor %}
-                                </td>
-                                <td><b style="font-size:16px;">Countries</b> <br>
-                                    {% for region_name in item['region_name_list'] %}
-                                        {{ region_name }},
+                                    {% for channel in channels %}
+                                    {% if channel == 'youtube' %}
+                                    <a href="#" class="fa fa-youtube fa-lg icons"></a>
+                                    {% elif channel == 'facebook' %}
+                                    <a href="#" class="fa fa-facebook fa-lg icons"></a>
+                                    {% elif channel == 'twitter' %}
+                                    <a href="#" class="fa fa-twitter fa-lg icons"></a>
+                                    {% elif channel == 'instagram' %}
+                                    <a href="#" class="fa fa-instagram fa-lg icons"></a>
+                                    {% endif %}
                                     {% endfor %}
-                                </td>
-                                <td>
-                                    <b style="font-size:16px;">Period</b> <br>
-                                    {{ item['from_date'] }} - {{ item['to_date'] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b style="font-size:16px;">Followers</b> <br>
-                                    {{ item['min_lower_followers'] }} - {{ item['max_upper_followers'] }}
-                                </td>
-                                <td><b style="font-size:16px;">Budget</b> <br>
-                                    {{ item['currency'] }} {{ item['budget'] }}
-                                </td>
-                                <td>
-                                    <b style="font-size:16px;">KPI</b> <br>
-                                    {{ item['kpis'] }}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td><b style="font-size:16px;">Category</b> <br>
-                                    <button type="button" style="font-size:10px;">{{ item['video_cat_name'] }}</button>
-                                </td>
-                                <td><b style="font-size:16px;">Target URL</b> <br>
-                                    <i class="fa fa-link"></i><a href="{{ item['target_url'] }}" target="_blank">Target Url</a>
-                                </td>
-                                <td>
-                                    <b style="font-size:16px;">Content Type</b> <br>
-                                    {% set arrangements = item['arrangements'].split(',') %}
-                                        {% for content_type in arrangements %}
-                                    <button type="button" style="font-size:10px;">{{ content_type }}</button>
-                                    {% endfor %}
-                                </td>
-                            </tr>
-                            <tr>
-                                <td colspan="3" rowspan="10" style="border-radius:2px; border: 1px #929591   solid;">
-                                    <b style="margin-left:30%;">Description</b><br>
-                                    {{ item['classified_description'] }}
-                                </td>
-                            </tr>
-                        </table>
+                                </div>
+                                <div class="col-sm border headers">Followers<br>
+                                    <span class="views">{{ item['min_lower_followers'] }} - {{ item['max_upper_followers'] }}</span>
+                                </div>
+                                <div class="col-sm  border headers">Budget<br>
+                                    <span class="views">{{ item['budget'] }} {{ item['currency'] }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm  border headers">Categories<br>
+                                    <span class="views">{{ item['video_cat_name'] }}</span>
+                                </div>
+                                <div class="col-sm border headers">Content Type<br>
+                                    <span class="views">{{ item['arrangements'] }}</span>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-sm border headers">Description<br>
+                                    <span class="views">{{ item['classified_description'] }}</span>
+                                </div>
+                            </div>
+                        </div>
+
                     </div>
+
+                    <div class="row">
+                        <div class="col-sm  title"><br>
+                            {{item['no_of_replies']}}
+                        </div>
+                        <div class="col-sm text-center"><br>
+                            <!--<a href="/viewClassifiedDetails/{{ item['classified_id'] }}" class="btn btn-sm" style="background-color:#50A9E4; color:white; font-size:12px;">Details</a>-->
+                        </div>
+
+                    </div>
+
+
                 </div>
-                {% endfor %}
             </div>
         </div>
+        {% endfor %}
     </div>
 </div>
+<script>
 
-<script type="text/javascript">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
+<script src='/static/app-assets/img-gallery/gallery.js'></script>
+<script>
+	document.querySelector(".bar").addEventListener("click", function() {
+			var list = document.querySelector("#list");
+			list.classList.toggle("visible");
+		});
+</script>
+<script>
 
-        var images = document.getElementById("divId")
-                             .getElementsByTagName("img");
+$('.container-gallery').gallery({
+			height: '18vw',
+			items: 4,
+			thumbHeight: '5vw',
+			showThumbnails: true,
+			singleLine: true,
+			0: {
+				<!--height: 200,-->
+				<!--width: '10vw',-->
+				items: 4,
+			},
 
-        for (var i = 0; i < images.length; i++)
-        {
-            images[i].onmouseover = function ()
-            {
-                this.style.cursor = 'hand';
-                this.style.borderColor = 'black';
-            }
-            images[i].onmouseout = function ()
-            {
-                this.style.cursor = 'pointer';
-                this.style.borderColor = 'grey';
-            }
-        }
+});
 
-        function changeImageOnClick(event)
-        {
-            event = event || window.event;
-            var targetElement = event.target || event.srcElement;
+</script>
 
-            if (targetElement.tagName == "IMG")
-            {
-                mainImage.src = targetElement.getAttribute("src");
-            }
-        }
-    </script>
+
 {% endblock %}

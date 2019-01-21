@@ -7,6 +7,14 @@
 {% block body %}
 {% set glob={} %}
 
+
+<style>
+    .modal-body {
+    height:300px !important;
+    max-height: calc(100vh - 212px) !important;
+    overflow-y: auto !important;
+}
+</style>
 <div class="email-application">
     <div class="content-overlay"></div>
     <div class="row">
@@ -369,20 +377,23 @@
 
             <label for="proposal_channels">Channels :</label>
             <div id="proposal_channels">
-                <input multiple type="checkbox" value="" name="proposal_channels" id="youtube_channel_id" required>
-                <a href="#" class="fa fa-youtube red"></a>
-                <input multiple type="checkbox" value="" name="proposal_channels" id="twitter_channel_id">
-                <a href="#" class="fa fa-twitter"></a>
-                <input type="checkbox" value="facebook" disabled>
-                <a href="#" class="fa fa-facebook blue"></a>
-                <input type="checkbox" value="instagram" disabled>
-                <a href="#" class="fa fa-instagram pink"></a>
+                <!--<input multiple type="checkbox" value="" name="proposal_channels" id="youtube_channel_id" required>-->
+                <!--<a href="#" class="fa fa-youtube red"></a>-->
+                <!--<input multiple type="checkbox" value="" name="proposal_channels" id="twitter_channel_id">-->
+                <!--<a href="#" class="fa fa-twitter"></a>-->
+                <!--<input type="checkbox" value="facebook" disabled>-->
+                <!--<a href="#" class="fa fa-facebook blue"></a>-->
+                <!--<input type="checkbox" value="instagram" disabled>-->
+                <!--<a href="#" class="fa fa-instagram pink"></a>-->
             </div>
             <input type="text"  name="target_url" id="proposal_target_url" readonly>
             <input type="text"  name="ref_link" id="proposal_ref_link" placeholder="ref link" required>
+            <br>
+            <label for="proposal_arrangements">Arrangements :</label>
             <div id="proposal_arrangements">
 
             </div>
+            <label for="proposal_kpis">Kpis :</label>
             <div id="proposal_kpis">
 
             </div>
@@ -669,17 +680,23 @@ function getAllMappedChannel_ids(channel_id){
                contentType: 'application/json;charset=UTF-8',
                success: function(data)
                {
-                   $( '#youtube_channel_id').empty();
-                   $( '#twitter_channel_id').empty();
+                   $( '#proposal_channels').empty();
+                   <!--$( '#twitter_channel_id').empty();-->
                    if (data.results.length != 0){
                    jQuery.each(data.results, function(i, val) {
-                        <!--alert(val.youtube_channel_id);-->
-                        <!--alert(val.twitter_channel_id);-->
-                            $( '#youtube_channel_id').val(val.youtube_channel_id);
-                            $( '#twitter_channel_id').val(val.twitter_channel_id);
-                            <!--$('#status'+channel_id).append('<b style="font-weight:450; font-size:15px;">'+val.campaign_name+'<br/></b>');-->
-                            <!--$('#status'+channel_id).append('<b style="font-weight:400; color:orange; font-size:15px;">'+val.status+'</b>');-->
-                            <!--$('#status'+channel_id).append('<hr style="height:0px; margin:auto;">');-->
+                        alert(val.youtube_channel_id);
+                        alert(val.twitter_channel_id);
+                            if(val.youtube_channel_id){
+                                <!--$( '#youtube_channel_id').val(val.youtube_channel_id);-->
+                                <!--$( '#youtube_channel_id').val('youtube');-->
+                                $("#proposal_channels").append('<input multiple type ="checkbox" name="proposal_channels" value="youtube@'+val.youtube_channel_id+'"><span data-toggle="tooltip" title="'+val.youtube_first_name+'"><a target="_blank" href="https://www.youtube.com/channel/'+val.youtube_channel_id+'" class="fa fa-youtube red"></a></span>');
+                            }
+                            if(val.twitter_channel_id){
+                                <!--$( '#twitter_channel_id').val(val.twitter_channel_id);-->
+                                <!--$( '#twitter_channel_id').val('twitter');-->
+                                $("#proposal_channels").append('<input multiple type ="checkbox" name="proposal_channels" value="twitter@'+val.twitter_channel_id+'"><span data-toggle="tooltip" title="'+val.twitter_first_name+'"><a href="#" class="fa fa-twitter"></span></a>');
+                            }
+
                     });
                     }
                     else{

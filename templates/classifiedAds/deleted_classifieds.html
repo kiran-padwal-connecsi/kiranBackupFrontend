@@ -29,7 +29,7 @@ color:#9E57DD;
 
 <div class="container-fluid">
     <div class="row">
-        {% for item in all_classified_data %}
+        {% for item in view_classified_data %}
         {% set images = item['files'].split(',') %}
         <div class="col-sm-6">
             <div class="card shadow-sm p-1">
@@ -89,8 +89,8 @@ color:#9E57DD;
                             <a href="/viewClassifiedDetails/{{ item['classified_id'] }}" class="btn btn-sm" style="background-color:#50A9E4; color:white; font-size:12px;">Details</a>
                         </div>
                         <div class="col-sm float-right text-right"><br>
-                            <a href="/editClassified/{{ item['classified_id'] }}" data-toggle="tooltip" title="Edit Classified"><img src="/static/icons/edit.png" height="19px" width="17px"></a>
-                            <a href="/deleteClassified/{{ item['classified_id'] }}" id="" data-toggle="tooltip" title=" Delete Classified"><img src="/static/icons/delete.png" height="19px" width="17px"></a>
+                            <!--<a href="/editClassified/{{ item['classified_id'] }}" data-toggle="tooltip" title="Edit Classified"><img src="/static/icons/edit.png" height="19px" width="17px"></a>-->
+                            <!--<a href="/deleteClassified/{{ item['classified_id'] }}" id="" data-toggle="tooltip" title=" Delete Classified"><img src="/static/icons/delete.png" height="19px" width="17px"></a>-->
                         </div>
                     </div>
 

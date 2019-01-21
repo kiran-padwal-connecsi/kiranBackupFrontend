@@ -726,6 +726,9 @@ def deletedCampaigns():
     return render_template('campaign/deleted_campaigns.html',view_campaign_data=deleted_campaign_list)
 
 
+
+
+
 @connecsiApp.route('/viewCampaigns',methods=['GET','POST'])
 @is_logged_in
 def viewCampaigns():
@@ -769,6 +772,10 @@ def viewCampaignDetails(campaign_id):
     from templates.campaign.campaign import Campaign
     campaignObj = Campaign(user_id=user_id,campaign_id=campaign_id)
     view_campaign_details_data = campaignObj.get_campaign_details()
+
+    channel_status_campaign = requests.get(url=base_url + 'Campaign/channel_status_for_campaign_by_campaign_id/' + str(campaign_id))
+    print('status of channel =',channel_status_campaign.json())
+    channel_status_campaign_data=channel_status_campaign.json()
     # print('my data',view_campaign_details_data)
     campaign_status = 'Queued'
     for item in view_campaign_details_data['data']:
@@ -783,7 +790,7 @@ def viewCampaignDetails(campaign_id):
         elif item['campaign_status'] == 'New':
             resposnse = requests.put(url=base_url + 'Campaign/update_campaign_status/' + str(campaign_id) + '/' + str(campaign_status))
 
-    return render_template('campaign/viewCampaignDetails.html',view_campaign_details_data=view_campaign_details_data)
+    return render_template('campaign/viewCampaignDetails.html',view_campaign_details_data=view_campaign_details_data,channel_status_campaign_data=channel_status_campaign_data)
 
 @connecsiApp.route('/getCampaignDetails/<string:campaign_id>',methods=['GET'])
 @is_logged_in
@@ -1368,6 +1375,8 @@ def sendProposal():
        user_id= session['user_id']
        # type = session['type']
        url = base_url + 'Brand/Proposal/' + str(user_id)
+       print(url)
+       # exit()
        try:
            response = requests.post(url=url, json=payload)
            data = response.json()
@@ -1719,6 +1728,165 @@ def saveClassified():
         flash('Unauthorized', 'danger')
 
 
+
+@connecsiApp.route('/editClassified/<string:classified_id>',methods=['GET'])
+@is_logged_in
+def editClassified(classified_id):
+    url_regionCodes = base_url + 'Youtube/regionCodes'
+    regionCodes_json = ''
+    try:
+        regionCodes_response = requests.get(url=url_regionCodes)
+        regionCodes_json = regionCodes_response.json()
+        # print(regionCodes_json)
+    except:
+        pass
+    url_videoCat = base_url + 'Youtube/videoCategories'
+    videoCat_json = ''
+    try:
+        response_videoCat = requests.get(url=url_videoCat)
+        videoCat_json = response_videoCat.json()
+        # print(videoCat_json)
+    except Exception as e:
+        print(e)
+    print(classified_id)
+    user_id = session['user_id']
+    from templates.classifiedAds.classified import Classified
+    classifiedObj = Classified(user_id=user_id, classified_id=classified_id)
+    classified_details = classifiedObj.get_classified_details()
+    print(classified_details)
+    try:
+        for item in classified_details['data']:
+            item['from_date'] = datetime.datetime.strptime(item['from_date'],'%d-%b-%y').date()
+            item['to_date'] = datetime.datetime.strptime(item['to_date'], '%d-%b-%y').date()
+            item['arrangements'] = item['arrangements'].replace('/', '')
+            item['arrangements'] = item['arrangements'].replace(' ', '')
+            item['kpis'] = item['kpis'].replace(' ', '')
+    except Exception as e:
+        print(e)
+    return render_template('classifiedAds/edit_classifiedForm.html', view_classified_details_data=classified_details,
+                           regionCodes=regionCodes_json, videoCategories=videoCat_json)
+
+
+
+@connecsiApp.route('/updateClassified',methods=['POST'])
+@is_logged_in
+def updateClassified():
+    if request.method == 'POST':
+        payload = request.form.to_dict()
+        # print('payload = ',payload)
+        classified_id = request.form.get('classified_id')
+        # exit
+        del payload['classified_id']
+        # print(payload)
+        # print(campaign_id)
+        # exit()
+        channels = request.form.getlist('channels')
+        channels_string = ','.join(channels)
+        payload.update({'channels':channels_string})
+        regions = request.form.getlist('country')
+        regions_string = ','.join(regions)
+        payload.update({'regions':regions_string})
+
+
+        arrangements = request.form.getlist('arrangements')
+        arrangements_string = ','.join(arrangements)
+        payload.update({'arrangements': arrangements_string})
+
+        kpis = request.form.getlist('kpis')
+        kpis_string = ','.join(kpis)
+        payload.update({'kpis': kpis_string})
+
+        convert_to_campaign = request.form.get('convert_to_campaign')
+        # print('is classified = ',is_classified_post)
+        try:
+            del payload['country']
+            del payload['convert_to_campaign']
+        except:pass
+        if convert_to_campaign == 'on':
+            payload.update({'convert_to_campaign':'TRUE'})
+        else:
+            payload.update({'convert_to_campaign':'FALSE'})
+        files = request.files.getlist("brands_classified_files")
+        # print(files)
+        # exit()
+        filenames=[]
+        for file in files:
+            filename = brands_classified_files.save(file)
+            filenames.append(filename)
+
+
+        user_id = session['user_id']
+        url_classified = base_url + 'Classified/' + str(classified_id) + '/' + str(user_id)
+        response_classified = requests.get(url=url_classified)
+        result_json_classified = response_classified.json()
+        # print('cam data',result_json_campaign)
+
+        for item in result_json_classified['data']:
+            files_string = item['files']
+            print(files_string)
+            if files_string:
+               filenames.append(files_string)
+
+        filenames_string = ','.join(filenames)
+        print('file name string', filenames_string)
+        payload.update({'files': filenames_string})
+
+        print('last payload',payload)
+        # exit()
+        url = base_url + 'Classified/'+str(classified_id)+'/' + str(user_id)
+        print(url)
+        try:
+            response = requests.put(url=url, json=payload)
+            result_json = response.json()
+            print(result_json)
+            flash('Updated Classified', 'success')
+            return viewAllClassifiedAds()
+        except Exception as e:
+            print(e)
+            flash('campaign didnt saved Please try again later','danger')
+            pass
+    else:
+        flash('Unauthorized', 'danger')
+
+
+@connecsiApp.route('/deleteClassified/<string:classified_id>',methods=['GET'])
+@is_logged_in
+def deleteClassified(classified_id):
+    print(classified_id)
+    user_id= session['user_id']
+    url = base_url + 'Classified/' + str(classified_id) + '/' + str(user_id)
+    print(url)
+    try:
+        response = requests.delete(url=url)
+        result_json = response.json()
+        print(result_json)
+        # res = requests.put(url=base_url + 'Campaign/update_campaign_status/' + str(campaign_id) + '/' + 'InActive')
+        flash('Deleted Campaign', 'success')
+        return viewAllClassifiedAds()
+    except Exception as e:
+        print(e)
+        flash('Please try again later', 'danger')
+        pass
+
+@connecsiApp.route('/deletedClassifieds',methods=['GET','POST'])
+@is_logged_in
+def deletedClassifieds():
+    user_id=session['user_id']
+    # import templates
+    from templates.classifiedAds.classified import Classified
+    classifiedObj = Classified(user_id=user_id)
+    all_classified_data = classifiedObj.get_all_classifieds()
+    deleted_classified_list = []
+    for item in all_classified_data['data']:
+        if item['deleted'] =='true':
+            deleted_classified_list.append(item)
+
+    print(deleted_classified_list)
+    return render_template('classifiedAds/deleted_classifieds.html',view_classified_data=deleted_classified_list)
+
+
+
+
 def exportCsv(data):
     print('my data = ', data)
     print(os.getcwd())
@@ -1741,7 +1909,12 @@ def viewAllClassifiedAds():
     from templates.classifiedAds.classified import Classified
     classifiedObj = Classified(user_id=user_id)
     all_classified_data = classifiedObj.get_all_classifieds()
-    return render_template('classifiedAds/view_all_classifiedAds.html',all_classified_data=all_classified_data)
+    view_classified_data_list = []
+    for item in all_classified_data['data']:
+        if item['deleted'] != 'true':
+            view_classified_data_list.append(item)
+    print(view_classified_data_list)
+    return render_template('classifiedAds/view_all_classifiedAds.html',all_classified_data=view_classified_data_list)
 
 
 @connecsiApp.route('/viewClassifiedDetails/<string:classified_id>')
@@ -1794,6 +1967,119 @@ def delFavInf(channel_id,user_id):
         if response['response']==1:
             return 'Influencer Removed From Favourite List'
         else: return 'Server Error'
+
+
+
+@connecsiApp.route('/saveBrandReport',methods = ['POST'])
+@is_logged_in
+def saveBrandReport():
+    if request.method == 'POST':
+
+       user_id = session['user_id']
+       campaign_id = request.form.get('campaign_id')
+       channel_id_list = request.form.getlist('channel_id')
+       revenue_list = request.form.getlist('revenue')
+       new_users_list = request.form.getlist('new_users')
+       currency_list = request.form.getlist('currency')
+       zip_list = list(zip(revenue_list,new_users_list,currency_list,channel_id_list))
+       print(zip_list)
+       for item in zip_list:
+           try:
+                channels_list = item[3].split('@')
+                payload = {'revenue_generated':item[0],'new_users':item[1],'currency':item[2],'channel_id':channels_list[1],'channel':channels_list[0]}
+                url = base_url + 'Campaign/BrandCampaignReport/' + str(user_id) + '/' + str(campaign_id)
+                print(payload)
+                response = requests.post(url=url, json=payload)
+                data = response.json()
+           except Exception as e:
+               print(e)
+               pass
+               return 'server error'
+       return 'Added Report'
+
+
+@connecsiApp.route('/updateBrandReport',methods = ['POST'])
+@is_logged_in
+def updateBrandReport():
+    if request.method == 'POST':
+       user_id = session['user_id']
+       campaign_id = request.form.get('campaign_id')
+       channel_id_list = request.form.getlist('channel_id')
+       revenue_list = request.form.getlist('revenue')
+       new_users_list = request.form.getlist('new_users')
+       currency_list = request.form.getlist('currency')
+       zip_list = list(zip(revenue_list,new_users_list,currency_list,channel_id_list))
+       print(zip_list)
+       # exit()
+       #
+       for item in zip_list:
+           try:
+                payload = {'revenue_generated':item[0],'new_users':item[1],'currency':item[2]}
+                url = base_url + 'Campaign/BrandCampaignReport/Update/' + str(campaign_id) + '/' + str(item[3])
+                print('payload = ',payload)
+                print(url)
+                response = requests.put(url=url, json=payload)
+                data = response.json()
+           except Exception as e:
+               print(e)
+               pass
+               return 'server error'
+       return 'Updated Report'
+
+@connecsiApp.route('/getBrandReport/<string:campaign_id>',methods = ['GET'])
+@is_logged_in
+def getBrandReport(campaign_id):
+    print('cam=',campaign_id)
+
+    user_id = session['user_id']
+    url = base_url+'Campaign/BrandCampaignReport/'+str(user_id)+'/'+str(campaign_id)
+    print(url)
+    try:
+        bcr_data = requests.get(url=url)
+        response_json = bcr_data.json()
+        return jsonify(results=response_json['data'])
+    except Exception as e:
+        print(e)
+        return 'server error'
+
+@connecsiApp.route('/getBrandReportByCampaignIdAndChannelIds/<string:campaign_id>/<string:proposal_channels>',methods = ['GET'])
+@is_logged_in
+def getBrandReportByCampaignIdAndChannelIds(campaign_id,proposal_channels):
+    print('cam=',campaign_id)
+    print(proposal_channels)
+    user_id = session['user_id']
+    url = base_url + 'Campaign/BrandCampaignReport/' + str(user_id) + '/' + str(campaign_id)
+    bcr_data = requests.get(url=url)
+    bcr_response_json = bcr_data.json()
+    print(bcr_response_json)
+    # exit()
+    bcr_dict = {'data': ''}
+    data=[]
+    channel_id_list = proposal_channels.split(',')
+    for channel in channel_id_list:
+        channel_id_final = channel.split('@')
+        for item in bcr_response_json['data']:
+            if item['channel_id']==channel_id_final[1]:
+                data.append(item)
+
+    bcr_dict.update({'data':data})
+    return jsonify(results=bcr_dict['data'])
+
+
+@connecsiApp.route('/delBrandReport/<string:campaign_id>/<string:proposal_channels>',methods = ['GET'])
+@is_logged_in
+def delBrandReport(campaign_id,proposal_channels):
+    print('campaign_id=',campaign_id)
+    print(proposal_channels)
+    channel_id_list= proposal_channels.split(',')
+    for channel in channel_id_list:
+        channel_id_final=channel.split('@')
+        url = base_url+'Campaign/BrandCampaignReport/Delete/'+str(campaign_id)+'/'+str(channel_id_final[1])
+        print(url)
+        bcr_data = requests.delete(url=url)
+    return 'Report deleted'
+
+
 
 
 @connecsiApp.route('/reports')

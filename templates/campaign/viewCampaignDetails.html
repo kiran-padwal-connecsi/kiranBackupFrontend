@@ -121,98 +121,247 @@
 
                     <div style="background-color: white;" class="table-responsive">
                         <!--<ul class="nav nav-tabs">-->
-                            <!--{% set channels = view_campaign_details_data['data'][0]['channels'].split(',') %}-->
-                            <!--{% for channel in channels %}-->
-                            <!--<li class="nav-item">-->
-                                <!--<a class="nav-link" data-toggle="tab" href="#{{ channel }}">{{ channel }}</a>-->
-                            <!--</li>-->
-                            <!--{% endfor %}-->
+                        <!--{% set channels = view_campaign_details_data['data'][0]['channels'].split(',') %}-->
+                        <!--{% for channel in channels %}-->
+                        <!--<li class="nav-item">-->
+                        <!--<a class="nav-link" data-toggle="tab" href="#{{ channel }}">{{ channel }}</a>-->
+                        <!--</li>-->
+                        <!--{% endfor %}-->
                         <!--</ul>-->
                         <!--<div class="tab-content">-->
 
-                            <!--<div class="tab-pane container fade" id="youtube">-->
-                                <table class="table table-bordered table-striped table-hover mystyle" style="background-color: white;">
-                                    <tr class="mystyle">
-                                        <th>Influencers</th>
-                                        <th>Status</th>
-                                        <th>Channels</th>
-                                        <th>Cost</th>
-                                        <th>Revenue</th>
-                                        <th>Posts</th>
-                                        <th>Views</th>
-                                        <th>Clicks</th>
-                                        <th>New Users</th>
-                                        <th>Engagement %</th>
-                                        <th>CPA</th>
-                                        <th>ROI</th>
-                                    </tr>
+                        <!--<div class="tab-pane container fade" id="youtube">-->
+                        <table class="table table-bordered table-striped table-hover mystyle" style="background-color: white;">
+                            <tr class="mystyle">
+                                <th>Influencers</th>
+                                <th>Status</th>
+                                <th>Channels</th>
+                                <th>Cost</th>
+                                <th>Revenue</th>
+                                <th>Posts</th>
+                                <th>Views</th>
+                                <th>Clicks</th>
+                                <th>New Users</th>
+                                <th>Engagement %</th>
+                                <th>CPA</th>
+                                <th>ROI</th>
+                            </tr>
 
-                                    {% for youtube_inf_data in view_campaign_details_data['data'][0]['youtube_inf_data'] %}
-                                    <tr>
-                                        <td>
-                                            <img  src="{{ youtube_inf_data['channel_img'] }}" class="dropdown rounded-circle img-border gradient-summer width-50">
-                                            <div class="submenu"  style="display: None">
-                                                <a data-toggle="tooltip" title="Message" href="/compose"><i class="fa fa-envelope"></i></a>
-                                                <a data-toggle="tooltip" title="Add Report" href="/addBrandsReport/{{ youtube_inf_data['channel_id'] }}"><img src="/static/icons/writing.png" height="14px" width="13px"></a>
-                                                <a data-toggle="tooltip" title="Payment" href="/payInf/{{ youtube_inf_data['channel_id'] }}"><img src="/static/icons/payment-method.png" height="14px" width="13px"></a>
-                                            </div>
+                            {% for youtube_inf_data in view_campaign_details_data['data'][0]['youtube_inf_data'] %}
+                            <tr>
+                                <td>
+                                    <img  src="{{ youtube_inf_data['channel_img'] }}" class="dropdown rounded-circle img-border gradient-summer width-50">
+                                    <div class="submenu"  style="display: None">
 
-                                            <a class="collapsed" data-toggle="collapse" data-target="#{{ youtube_inf_data['channel_id'] }}">
-                                                {{ youtube_inf_data['title'] }}
-                                            </a>
+                                                <span data-toggle="modal" data-target="#sendMessage">
+                        <a  onclick="sendMessage('{{ youtube_inf_data['channel_id'] }}','{{ youtube_inf_data['business_email'] }}')" class="fa fa-envelope " data-toggle="tooltip"  title="Message" style="position: relative; z-index: 1; font-size:14px; color:#9E57DD;"></a>
+                        </span>
+                                        {% if youtube_inf_data['ref_link'] %}
+                                        <span data-toggle="modal" data-target="#addReport" id="reportIcon{{ youtube_inf_data['channel_id'] }}">
+                                        <a onclick="addReport('{{ view_campaign_details_data['data'][0]['campaign_id'] }}','{{ youtube_inf_data['proposal_channels'] }}')" data-toggle="tooltip" title="Add Report" ><img src="/static/icons/writing.png" height="14px" width="13px"></a>
+                                        </span>
+                                        <span data-toggle="modal" data-target="#edit_del_report_screen" id="editReportIcon{{ youtube_inf_data['channel_id'] }}" style="display:None;">
+                                        <a onclick="edit_del_Report('{{ view_campaign_details_data['data'][0]['campaign_id'] }}','{{ youtube_inf_data['proposal_channels'] }}')" data-toggle="tooltip" title="Edit/Delete Report" ><img src="/static/icons/writing.png" height="14px" width="13px"></a>
+                                        </span>
+                                        <a  href="{{ youtube_inf_data['ref_link'] }}" class="fa fa-link " data-toggle="tooltip"  title="Reference Link" style="position: relative; z-index: 1; font-size:14px; color:#9E57DD;"></a>
+                                        {% endif %}
+                                        <a data-toggle="tooltip" title="Payment Feature Coming Soon" href="#"><img src="/static/icons/payment-method.png" height="14px" width="13px"></a>
+                                    </div>
 
-                                            <!--<div ></div>-->
-                                            <div id="{{ youtube_inf_data['channel_id'] }}" class="collapse" data-parent="#{{ youtube_inf_data['channel_id'] }}">
-                                                Anim pariatur cliche reprehenderit
-                                            </div>
-                                        </td>
+                                    <a class="show" id="{{ youtube_inf_data['channel_id'] }}">
+                                        {{ youtube_inf_data['title'] }}
+                                    </a>
+                                </td>
 
-                                        <td></td>
-                                        <td></td>
-                                        <td >$1500</td>
-                                        <td >$10000</td>
-                                        <td>10</td>
-                                        <td >10000</td>
-                                        <td>$20000</td>
-                                        <td>5000</td>
-                                        <td>0.45%</td>
-                                        <td>6.5</td>
-                                        <td>%</td>
-                                    </tr>
+                                <td>
+                                    {% for status in channel_status_campaign_data['data'] %}
+                                        {% if youtube_inf_data['channel_id']==status['channel_id']  %}
+                                            {{ status['status'] }}
+                                        {% endif %}
                                     {% endfor %}
-                                </table>
-                            </div>
-                            <!--<div class="tab-pane container fade" id="twitter">-->
-                                <!--<table class="table table-bordered table-striped table-hover" style="background-color: white;">-->
-                                    <!--<tr>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Influencers</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Status</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Cost</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Revenue</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Posts</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Views</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Clicks</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">New<br /> Users</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">Engagement %</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">CPA</b></th>-->
-                                        <!--<th><b style="font-weight: 500; font-size:15px;">ROI</b></th>-->
-                                    <!--</tr>-->
+                                </td>
+                                <td>
+                                {% if youtube_inf_data['proposal_channels'] %}
+                                {% set channels = youtube_inf_data['proposal_channels'].split(',') %}
+                                        {% for channel in channels %}
+                                            {% set channel_final = channel.split('@') %}
+                                            {% if channel_final[0] == 'youtube' %}
+                                            <a href="#" class="fa fa-youtube fa-lg" style="color:#9E57DD ;"></a>
+                                            {% elif channel_final[0] == 'facebook' %}
+                                            <a href="#" class="fa fa-facebook fa-lg " style="color:#9E57DD ;"></a>
+                                            {% elif channel_final[0] == 'twitter' %}
+                                            <a href="#" class="fa fa-twitter fa-lg" style="color:#9E57DD ;"></a>
+                                            {% elif channel_final[0] == 'instagram' %}
+                                            <a href="#" class="fa fa-instagram fa-lg " style="color:#9E57DD ;"></a>
+                                            {% endif %}
+                                        {% endfor %}
+                                 {% endif %}
+                                </td>
+                                <td ></td>
+                                <td id="revenue_total{{ youtube_inf_data['channel_id'] }}"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                                <td id="new_users_total{{ youtube_inf_data['channel_id'] }}"></td>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                            {% if youtube_inf_data['proposal_channels'] %}
+                            {% set channels = youtube_inf_data['proposal_channels'].split(',') %}
+                            {% for channel in channels %}
+                            {% set channel_final = channel.split('@') %}
 
-                                    <!--{% for twitter_inf_data in view_campaign_details_data['data'][0]['twitter_inf_data'] %}-->
-                                    <!--<tr>-->
-                                        <!--{{ twitter_inf_data['twitter_id'] }}-->
-                                    <!--</tr>-->
+                                <tr style="display:none;" class="{{ youtube_inf_data['channel_id'] }}">
+                                    <td>
+                                        <!--<a href="#" data-toggle="tooltip" title="Add Report"><img src="/static/icons/writing.png" height="14px" width="13px"></a>-->
+                                        <!--<a href="#" data-toggle="tooltip" title="Edit Report"><img src="/static/icons/edit.png" height="14px" width="13px"></a>-->
+                                        <!--<a id="delReport{{ channel_final[1] }}" data-toggle="tooltip" title=" Delete Report"><img src="/static/icons/delete.png" height="14px" width="13px"></a>-->
+                                    </td>
+                                    <td></td>
+                                    <td id="channel">{{ channel_final[0] }}</td>
+                                    <td></td>
+                                    <td id="revenue{{ channel_final[1] }}"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td id="new_users{{ channel_final[1] }}"></td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
 
-                                    <!--{% endfor %}-->
-                                <!--</table>-->
-                            <!--</div>-->
-                        </div>
+                            {% endfor %}
+
+                            {% endif %}
+
+                            {% endfor %}
+
+                        </table>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Send message Modal form-->
+<div class="modal fade" id="sendMessage" role="dialog"  data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header alert-primary">
+                <b class="modal-title">Send Message</b>
+                <button  type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form name="create_alert_form" id="send_message_form" action="/sendMessage" method="POST">
+                <div class="modal-body">
+                    <input  class="form-control" type="hidden" value="" name="channel_id" id="message_channel_id">
+                    <div class="row">
+                        <div class="col-12">
+                            <ul class="no-list-style">
+                                <li class="mb-2">
+                                    <span class="text-bold-500 primary"><a><i class=" font-small-3"></i>*To :</a></span>
+                                    <span class="display-block"><input type="text" class="form-control" name="to_email_id" id="to_email_id" readonly> </span>
+                                </li>
+                                <li class="mb-2">
+                                    <span class="text-bold-500 primary"><a><i class=" font-small-3"></i>*Subject :</a></span>
+                                    <span class="display-block"><input required type="text" class="form-control" name="subject" > </span>
+                                </li>
+                                <li class="mb-2">
+                                    <span class="text-bold-500 primary"><a><i class=" font-small-3"></i>Message:</a></span>
+                                    <span class="display-block"><textarea class="form-control" name="message"></textarea> </span>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit"  class="btn btn-default">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- add report Modal form-->
+<div class="modal fade" id="addReport" role="dialog"  data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header alert-primary">
+                <b class="modal-title">Add Report</b>
+                <button  type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form name="create_alert_form" id="brand_report_form" action="/saveBrandReport" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="campaign_id" id="brand_report_campaign_id" value="">
+                    <div class="row">
+
+                        <div class="col-12" id="brand_report">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit"  class="btn btn-default">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- edit report Modal form-->
+<div class="modal fade" id="edit_brand_Report_modal" role="dialog"  data-backdrop="static">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header alert-primary">
+                <b class="modal-title">Edit Report</b>
+                <button  type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+            <form name="create_alert_form" id="edit_brand_report_form" action="/updateBrandReport" method="POST">
+                <div class="modal-body">
+                    <input type="hidden" name="campaign_id" id="edit_brand_report_campaign_id" value="">
+                    <!--<input type="hidden" name="proposal_channels" id="edit_brand_report_proposal_channels" value="">-->
+                    <div class="row">
+
+                        <div class="col-12" id="edit_brand_report">
+
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit"  class="btn btn-default">Save</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- add report Modal form-->
+<div class="modal fade" id="edit_del_report_screen" role="dialog"  data-backdrop="static">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header alert-primary">
+                <b class="modal-title">Alert</b>
+                <button  type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+                <div class="modal-body">
+                    <!--<input type="hidden" name="campaign_id" id="brand_report_campaign_id" value="">-->
+                    <div class="row" style="font-size:12px; padding:10px;">
+                        You have successfully added a Report. To make further changes select following options:
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a id="editReport" data-toggle="tooltip" title="Edit Report"><img src="/static/icons/edit.png" height="24px" width="23px"></a>
+                    <a id="delReport" data-toggle="tooltip" title=" Delete Report"><img src="/static/icons/delete.png" height="24px" width="23px"></a>
+                </div>
+        </div>
+    </div>
+</div>
+
+
 <script>
     <!--$(document).ready(function () {-->
         <!--$(".nav-link").on('click', function () {-->
@@ -225,17 +374,6 @@
 </script>
 <script>
 $(document).ready(function(){
-    <!--&lt;!&ndash;$('[data-toggle="popover"]').popover();&ndash;&gt;-->
-    <!--$('.danger').popover({-->
-    <!--html : true,-->
-    <!--content: function() {-->
-      <!--return $('#popover_content_wrapper').html();-->
-    <!--}-->
-  <!--});-->
-});
-
-
-$(document).ready(function(){
     $(".dropdown").mouseover(function(){
     <!--$(".submenu").show();-->
     $(this).next().toggleClass().show();
@@ -245,7 +383,255 @@ $(document).ready(function(){
     <!--$(".submenu").hide();-->
     $(this).toggleClass().hide();
   });
+
+
+
+    $(".show").click(function(){
+        var channel_id = $(this).attr("id");
+        <!--alert(channel_id);-->
+        $('tr.'+channel_id).slideToggle("slow");
+    });
+
+
+
+
+  $("#send_message_form").submit(function(e) {
+        var form = $(this);
+        var url = form.attr('action');
+        var channel_id = $('#message_channel_id').val();
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: form.serialize(), // serializes the form's elements.
+               success: function(data)
+               {
+                   alert(data); // show response from the python script.
+                   $('#sendMessage').modal('toggle');
+                   <!--updateChannelStatusForCampaign(channel_id);-->
+               }
+             });
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+
+    $("#brand_report_form").submit(function(e) {
+        var form = $(this);
+        var url = form.attr('action');
+
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: form.serialize(), // serializes the form's elements.
+               success: function(data)
+               {
+                   alert(data); // show response from the python script.
+                   $('#addReport').modal('toggle');
+                   location.reload();
+                   <!--updateChannelStatusForCampaign(channel_id);-->
+               }
+             });
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+
+
+    $("#edit_brand_report_form").submit(function(e) {
+        var form = $(this);
+        var url = form.attr('action');
+        $.ajax({
+               type: "POST",
+               url: url,
+               data: form.serialize(), // serializes the form's elements.
+               success: function(data)
+               {
+                   alert(data); // show response from the python script.
+                   $('#edit_brand_Report_modal').modal('toggle');
+                   location.reload();
+                   <!--updateChannelStatusForCampaign(channel_id);-->
+               }
+             });
+        e.preventDefault(); // avoid to execute the actual submit of the form.
+    });
+
+
+
+
+    getBrandReport('{{ view_campaign_details_data['data'][0]['campaign_id'] }}');
 });
+
+function sendMessage(channel_id,to_email_id) {
+    <!--alert(channel_id);-->
+    $("#message_channel_id").val(channel_id);
+    $("#to_email_id").val(to_email_id);
+}
+function addReport(campaign_id,proposal_channels) {
+    alert(campaign_id);
+    alert(proposal_channels);
+    $("#brand_report_campaign_id").empty();
+    $("#brand_report_campaign_id").val(campaign_id);
+    var channels  = proposal_channels.split(',');
+    var channel;
+    <!--alert(channels);-->
+    $('#brand_report').empty();
+    for (channel of channels) {
+        var channel_final  = channel.split('@');
+        <!--alert(channel);-->
+        $('#brand_report').append('<tr>'+
+        '<td>'+
+            '<input type="hidden" name="channel_id" value="'+channel+'">'+
+            '<i class="fa fa-'+channel_final[0]+' purple">&nbsp'+channel_final[0]+'</i></td>&nbsp'+
+        '<td><input type="number" name="revenue" placeholder="Revenue Generated"></td>'+
+        '<td><input type="number" name="new_users" placeholder="New Users"></td>'+
+        '<td><select name="currency">'+
+        '<option value="USD">USD</option>'+
+        '<option value="EUR">EUR</option>'+
+        '<option value="INR">INR</option>'+
+        '<option value="PLN">PLN</option>'+
+        '</select></td>'+
+        '</tr>');
+    }
+
+}
+
+
+
+function edit_del_Report(campaign_id,proposal_channels) {
+    alert(campaign_id);
+    alert(proposal_channels);
+    $("#editReport").attr("onclick","getBrandReportByCampaignIdAndChannelIds('"+campaign_id+"','"+proposal_channels+"')");
+    $("#delReport").attr("onclick","delBrandReport('"+campaign_id+"','"+proposal_channels+"')");
+
+}
+
+
+function getBrandReport(campaign_id) {
+
+        $.ajax({
+               type: "GET",
+               url: '/getBrandReport/'+campaign_id,
+
+               success: function(data)
+               {
+                   <!--alert(data); // show response from the python script-->
+                   if (data.results.length != 0){
+                       {% for youtube_inf_data in view_campaign_details_data['data'][0]['youtube_inf_data'] %}
+                            {% if youtube_inf_data['proposal_channels'] %}
+                                {% set channels = youtube_inf_data['proposal_channels'].split(',') %}
+                                                    var total_revenue = 0;
+                                                    var total_new_users = 0;
+                                                    var channel_id = '';
+                                                jQuery.each(data.results, function(i, val) {
+                                                    {% for channel in channels %}
+                                                    {% set channel_final = channel.split('@') %}
+                                                            alert("jquery"+val.channel_id);
+                                                            alert("jinja"+'{{channel}}');
+                                                        if(val.channel_id == '{{channel_final[1]}}'){
+                                                            alert('equal');
+                                                            total_revenue += val.revenue_generated;
+                                                            total_new_users += val.new_users;
+                                                            alert(total_revenue);
+                                                            alert(val.channel_id);
+                                                        }
+
+                                                    {% endfor %}
+
+                                                });
+
+                                        <!--alert(total_revenue);-->
+
+                             {% endif %}
+                       {% endfor %}
+
+
+
+                       jQuery.each(data.results, function(i, val) {
+
+                            $('#revenue'+val.channel_id).html(val.revenue_generated);
+                            $('#new_users'+val.channel_id).html(val.new_users);
+                            $('#delReport'+val.channel_id).attr("onclick","delBrandReport("+val.brand_campaign_report_id+")");
+                            if(val.revenue_generated && val.new_users){
+                                $('#reportIcon'+val.channel_id).hide();
+                                $('#editReportIcon'+val.channel_id).show();
+                            }
+                            else{
+                                $('#reportIcon'+val.channel_id).show();
+                            }
+
+                        });
+
+                    }
+
+               }
+             });
+
+}
+
+
+function getBrandReportByCampaignIdAndChannelIds(campaign_id,proposal_channels) {
+        confirm("Do you want to edit ?");
+            $("#edit_brand_report_campaign_id").empty();
+            $("#edit_brand_report").empty();
+            $("#edit_brand_report_campaign_id").val(campaign_id);
+        $.ajax({
+               type: "GET",
+               url: '/getBrandReportByCampaignIdAndChannelIds/'+campaign_id+'/'+proposal_channels,
+
+               success: function(data)
+               {
+                   <!--alert(data); // show response from the python script-->
+                   if (data.results.length != 0){
+
+                       jQuery.each(data.results, function(i, val) {
+                            $('#edit_del_report_screen').modal('toggle');
+
+                                $('#edit_brand_report').append('<tr>'+
+                                '<td>'+
+                                    '<input type="hidden" name="channel_id" value="'+val.channel_id+'">'+
+                                    '<i class="fa fa-'+val.channel+' purple">&nbsp'+val.channel+'</i></td>&nbsp'+
+                                '<td><input type="number" name="revenue" placeholder="Revenue Generated" value="'+val.revenue_generated+'"></td>'+
+                                '<td><input type="number" name="new_users" placeholder="New Users" value="'+val.new_users+'"></td>'+
+                                '<td><select name="currency">'+
+                                    '<option value="'+val.currency+'">'+val.currency+'</option>'+
+                                    '<option value="USD">USD</option>'+
+                                    '<option value="EUR">EUR</option>'+
+                                    '<option value="INR">INR</option>'+
+                                    '<option value="PLN">PLN</option>'+
+                                    '</select></td>'+
+                                '</tr>');
+                                $('#edit_brand_Report_modal').modal('toggle');
+                        });
+
+                   }
+
+               }
+
+             });
+
+}
+
+
+
+function delBrandReport(campaign_id,proposal_channels) {
+
+        <!--alert(campaign_id);-->
+        <!--alert(proposal_channels);-->
+        confirm("Are You Sure You Want To Delete ?")
+        $.ajax({
+               type: "GET",
+               url: '/delBrandReport/'+campaign_id+'/'+proposal_channels,
+
+               success: function(data)
+               {
+                   alert(data); // show response from the python script
+
+                   location.reload();
+                   $('#edit_del_report_screen').modal('toggle');
+               }
+
+             });
+
+}
+
+
+
 
 </script>
 {% endblock %}
