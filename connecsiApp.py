@@ -6,6 +6,7 @@ from io import StringIO
 import csv
 import time
 #
+import copy
 import requests
 from flask import Flask, render_template, flash, redirect, url_for, session, request, logging, jsonify, make_response
 # from model.ConnecsiModel import ConnecsiModel
@@ -642,10 +643,10 @@ def updateCampaign():
             del payload['country']
             del payload['is_classified_post']
         except:pass
-        if is_classified_post == 'on':
-            payload.update({'is_classified_post':'TRUE'})
-        else:
-            payload.update({'is_classified_post':'FALSE'})
+        # if is_classified_post == 'on':
+        #     payload.update({'is_classified_post':'TRUE'})
+        # else:
+        #     payload.update({'is_classified_post':'FALSE'})
         files = request.files.getlist("campaign_files")
         # print(files)
         # exit()
@@ -673,6 +674,30 @@ def updateCampaign():
 
         print('last payload',payload)
         # exit()
+
+        if is_classified_post == 'on':
+            payload.update({'is_classified_post':'TRUE'})
+            print('payload inside if =',payload)
+            for file in files:
+                brands_classified_files.save(file)
+            user_id = session['user_id']
+            classified_url = base_url + 'Classified/' + str(user_id)
+            print(classified_url)
+            classified_payload = copy.deepcopy(payload)
+            classified_payload['classified_name'] = classified_payload.pop('campaign_name')
+            classified_payload['classified_description'] = classified_payload.pop('campaign_description')
+            classified_payload['convert_to_campaign'] = classified_payload.pop('is_classified_post')
+            print('classified_payload=',classified_payload)
+            try:
+                requests.post(url=classified_url, json=classified_payload)
+            except Exception as e:
+                print(e)
+                pass
+
+        else:
+            payload.update({'is_classified_post':'FALSE'})
+
+
         url = base_url + 'Campaign/'+str(campaign_id)+'/' + str(user_id)
         print(url)
         try:
@@ -830,10 +855,7 @@ def saveCampaign():
             del payload['country']
             del payload['is_classified_post']
         except:pass
-        if is_classified_post == 'on':
-            payload.update({'is_classified_post':'TRUE'})
-        else:
-            payload.update({'is_classified_post':'FALSE'})
+
         files = request.files.getlist("campaign_files")
         print(files)
         # exit()
@@ -845,10 +867,32 @@ def saveCampaign():
         payload.update({'files': filenames_string})
         print(payload)
         # exit()
-#
+        if is_classified_post == 'on':
+            payload.update({'is_classified_post':'TRUE'})
+            print('payload inside if =',payload)
+            for file in files:
+                brands_classified_files.save(file)
+            user_id = session['user_id']
+            classified_url = base_url + 'Classified/' + str(user_id)
+            print(classified_url)
+            classified_payload = copy.deepcopy(payload)
+            classified_payload['classified_name'] = classified_payload.pop('campaign_name')
+            classified_payload['classified_description'] = classified_payload.pop('campaign_description')
+            classified_payload['convert_to_campaign'] = classified_payload.pop('is_classified_post')
+            print('classified_payload=',classified_payload)
+            try:
+                requests.post(url=classified_url, json=classified_payload)
+            except Exception as e:
+                print(e)
+                pass
+
+        else:
+            payload.update({'is_classified_post':'FALSE'})
+
         user_id = session['user_id']
         url = base_url + 'Campaign/' + str(user_id)
         print(url)
+        print('campaign payload = ',payload)
         try:
             response = requests.post(url=url, json=payload)
             result_json = response.json()
@@ -1692,9 +1736,13 @@ def saveClassified():
         kpis_string = ','.join(kpis)
         payload.update({'kpis': kpis_string})
 
+        convert_to_campaign = request.form.get('convert_to_campaign')
+        print('convert to campaign = ', convert_to_campaign)
         try:
             del payload['country']
-        except:pass
+            del payload['convert_to_campaign']
+        except:
+            pass
         print(payload)
 
         files = request.files.getlist("brands_classified_files")
@@ -1708,6 +1756,29 @@ def saveClassified():
         filenames_string = ','.join(filenames)
         payload.update({'files': filenames_string})
         print(payload)
+
+
+        if convert_to_campaign == 'on':
+            payload.update({'convert_to_campaign':'TRUE'})
+            print('payload inside if =',payload)
+            for file in files:
+                campaign_files.save(file)
+            user_id = session['user_id']
+            campaign_url = base_url + 'Campaign/' + str(user_id)
+            print(campaign_url)
+            campaign_payload = copy.deepcopy(payload)
+            campaign_payload['campaign_name'] = campaign_payload.pop('classified_name')
+            campaign_payload['campaign_description'] = campaign_payload.pop('classified_description')
+            campaign_payload['is_classified_post'] = campaign_payload.pop('convert_to_campaign')
+            print('campaign_payload=',campaign_payload)
+            try:
+                requests.post(url=campaign_url, json=campaign_payload)
+            except Exception as e:
+                print(e)
+                pass
+
+        else:
+            payload.update({'convert_to_campaign':'FALSE'})
 
         user_id = session['user_id']
         url = base_url + 'Classified/' + str(user_id)
@@ -1832,6 +1903,29 @@ def updateClassified():
         payload.update({'files': filenames_string})
 
         print('last payload',payload)
+
+        if convert_to_campaign == 'on':
+            payload.update({'convert_to_campaign':'TRUE'})
+            print('payload inside if =',payload)
+            for file in files:
+                campaign_files.save(file)
+            user_id = session['user_id']
+            campaign_url = base_url + 'Campaign/' + str(user_id)
+            print(campaign_url)
+            campaign_payload = copy.deepcopy(payload)
+            campaign_payload['campaign_name'] = campaign_payload.pop('classified_name')
+            campaign_payload['campaign_description'] = campaign_payload.pop('classified_description')
+            campaign_payload['is_classified_post'] = campaign_payload.pop('convert_to_campaign')
+            print('campaign_payload=',campaign_payload)
+            try:
+                requests.post(url=campaign_url, json=campaign_payload)
+            except Exception as e:
+                print(e)
+                pass
+
+        else:
+            payload.update({'convert_to_campaign':'FALSE'})
+
         # exit()
         url = base_url + 'Classified/'+str(classified_id)+'/' + str(user_id)
         print(url)
@@ -1914,7 +2008,13 @@ def viewAllClassifiedAds():
         if item['deleted'] != 'true':
             view_classified_data_list.append(item)
     print(view_classified_data_list)
-    return render_template('classifiedAds/view_all_classifiedAds.html',all_classified_data=view_classified_data_list)
+
+    view_profile_url = base_url + 'Brand/' + str(user_id)
+    response = requests.get(view_profile_url)
+    profile_data_json = response.json()
+    print(profile_data_json)
+
+    return render_template('classifiedAds/view_all_classifiedAds.html',all_classified_data=view_classified_data_list,profile_data=profile_data_json)
 
 
 @connecsiApp.route('/viewClassifiedDetails/<string:classified_id>')
@@ -1925,7 +2025,13 @@ def viewClassifiedDetails(classified_id):
     classifiedObj = Classified(user_id=user_id,classified_id=classified_id)
     classified_details = classifiedObj.get_classified_details()
     print(classified_details)
-    return render_template('classifiedAds/viewClassifiedDetails.html',classified_details=classified_details)
+    view_profile_url = base_url + 'Brand/' + str(user_id)
+    response = requests.get(view_profile_url)
+    profile_data_json = response.json()
+    print(profile_data_json)
+
+
+    return render_template('classifiedAds/viewClassifiedDetails.html',classified_details=classified_details,profile_data=profile_data_json)
 
 @connecsiApp.route('/addYoutubeInfToCampaignList',methods=['POST'])
 @is_logged_in

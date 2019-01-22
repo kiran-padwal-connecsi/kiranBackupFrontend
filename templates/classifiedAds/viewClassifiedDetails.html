@@ -38,28 +38,33 @@ color:#9E57DD;
                     <div class="row">
                         <div class="col-sm text-left"><a href="/viewAllClassifiedAds">Back</a></div>
                         <div class="col-sm text-center title">{{ item['classified_name'] }}</div>
-                        <div class="col-sm text-right views"><i class="fa fa-eye"></i>{{item['no_of_views']}}</div>
+                        <div class="col-sm text-right views"><i class="fa fa-eye"></i> {{item['no_of_views']}}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm text-left"></div>
                         <div class="col-sm text-center"></div>
-                        <div class="col-sm text-right views">Posted on : Date</div>
+                        <div class="col-sm text-right views">Posted on : {{ item['posted_date'] }}</div>
                     </div>
                     <div class="row" style="margin-right:12px;">
                         <div class="col-sm">
                             <div class="container-gallery">
-                                <img src="/static/images/gallary/1.jpg" class="image ">
-                                <img src="/static/images/gallary/2.jpg" class="image ">
-                                <img src="/static/images/gallary/3.jpg" class="image ">
-                                <img src="/static/images/gallary/4.jpg" class="image ">
-                                <img src="/static/images/gallary/6.jpg" class="image ">
-                                <img src="/static/images/gallary/5.jpg" class="image ">
+                                {% set files = item['files'].split(',') %}
+                                {% for file in files %}
+                                <img src="../static/brands_classified_files/{{ file }}" class="image ">
+                                {% endfor %}
+
                             </div>
                         </div>
                         <!--<div class="col-sm"></div>-->
                         <div class="col-sm" style="padding:0px;">
                             <div class="row">
-                                <div class="col-sm  title">influencer name ?
+                                <div class="col-sm  title">
+                                    {% if profile_data['data']['profile_pic'] %}
+                            <img  src="/static/img/{{ profile_data['data']['profile_pic'] }}" class="rounded-circle img-border gradient-summer" alt="Card image" height="30px" width="30px">
+                            {% else %}
+                            <img src="/static/img/fixed_image.png" class="img-border gradient-summer " alt="Card image" width="30px" height="30px">
+                            {% endif %}
+                            {{ profile_data['data']['first_name'] }} {{ profile_data['data']['last_name'] }}
 
                                 </div>
                                 <div class="col-sm float-right text-right">

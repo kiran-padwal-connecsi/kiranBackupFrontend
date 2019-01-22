@@ -190,8 +190,12 @@
                                         </script>
                                     </span><br>
                                     <span>
+                                        {% if item['is_classified_post'] == 'TRUE' %}
+                                        Already Posted As Classified Ad
+                                        {% else %}
                                         <input type="checkbox" class="form-check-input" id="classifiedAds" name="is_classified_post">
                                         <label class="form-check-label" for="classifiedAds">Post as Classified Ads</label>
+                                        {% endif %}
                                     </span>
                                 </div>
                             </div>

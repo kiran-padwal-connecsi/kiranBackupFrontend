@@ -36,14 +36,17 @@ color:#9E57DD;
                 <div class="card-body bg-white">
                     <div class="row">
                         <div class="col-sm text-left title">{{ item['classified_name'] }}</div>
-                        <div class="col-sm text-right views"><i class="fa fa-eye"></i>{{item['no_of_views']}}</div>
+                        <div class="col-sm text-right views"><i class="fa fa-eye"></i> {{item['no_of_views']}}</div>
                     </div>
                     <div class="row">
                         <div class="col-sm text-left"></div>
-                        <div class="col-sm text-right views">Posted on : Date</div>
+                        <div class="col-sm text-right views">Posted on : {{ item['posted_date'] }}</div>
                     </div>
                     <div class="row" style="margin-right:12px;">
-                        <div class="col-sm "><img src="/static/images/gallary/1.jpg" class="image img-responsive"></div>
+                        <div class="col-sm ">
+                            {% set files = item['files'].split(',') %}
+                                <img src="../static/brands_classified_files/{{ files[0] }}" class="image ">
+                        </div>
                         <div class="col-sm " style="padding:0px;">
                             <div class="row">
                                 <div class="col-sm border headers ">Channels<br>
@@ -83,7 +86,14 @@ color:#9E57DD;
 
                     <div class="row">
                         <div class="col-sm  views"><br>
-                            {{item['no_of_replies']}}
+                            <!--{{item['no_of_replies']}}-->
+
+                            {% if profile_data['data']['profile_pic'] %}
+                            <img  src="/static/img/{{ profile_data['data']['profile_pic'] }}" class="rounded-circle img-border gradient-summer" alt="Card image" height="30px" width="30px">
+                            {% else %}
+                            <img src="/static/img/fixed_image.png" class="img-border gradient-summer " alt="Card image" width="30px" height="30px">
+                            {% endif %}
+                            {{ profile_data['data']['first_name'] }} {{ profile_data['data']['last_name'] }}
                         </div>
                         <div class="col-sm text-center"><br>
                             <a href="/viewClassifiedDetails/{{ item['classified_id'] }}" class="btn btn-sm" style="background-color:#50A9E4; color:white; font-size:12px;">Details</a>

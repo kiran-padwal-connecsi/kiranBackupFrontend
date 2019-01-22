@@ -190,8 +190,12 @@
                                         </script>
                                     </span><br>
                                     <span>
+                                        {% if item['convert_to_campaign'] == 'TRUE' %}
+                                        Already Posted As Campaign
+                                        {% else %}
                                         <input type="checkbox" class="form-check-input" id="convert_to_campaign" name="convert_to_campaign">
                                         <label class="form-check-label" for="convert_to_campaign">Post as Campaign</label>
+                                        {% endif %}
                                     </span>
                                 </div>
                             </div>
