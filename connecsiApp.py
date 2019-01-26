@@ -26,6 +26,7 @@ base_url = 'https://kiranpadwaltestconnecsi.pythonanywhere.com/Apis/'
 photos = UploadSet('photos', IMAGES)
 campaign_files = UploadSet('campaignfiles')
 brands_classified_files = UploadSet('brandsclassifiedfiles', IMAGES)
+offer_files = UploadSet('offerfiles', IMAGES)
 message_files = UploadSet('messagefiles', IMAGES)
 message_agreements = UploadSet('messageagreements')
 
@@ -37,6 +38,7 @@ message_agreements = UploadSet('messageagreements')
 connecsiApp.config['UPLOADED_PHOTOS_DEST'] = 'static/img'
 connecsiApp.config['UPLOADED_CAMPAIGNFILES_DEST'] = 'static/campaign_files'
 connecsiApp.config['UPLOADED_BRANDSCLASSIFIEDFILES_DEST'] = 'static/brands_classified_files'
+connecsiApp.config['UPLOADED_OFFERFILES_DEST'] = 'static/offer_files'
 connecsiApp.config['UPLOADED_MESSAGEFILES_DEST'] = 'static/message_files'
 connecsiApp.config['UPLOADED_MESSAGEAGREEMENTS_DEST'] = 'static/message_agreements'
 
@@ -45,6 +47,7 @@ connecsiApp.config['UPLOADED_MESSAGEAGREEMENTS_DEST'] = 'static/message_agreemen
 configure_uploads(connecsiApp, photos)
 configure_uploads(connecsiApp, campaign_files)
 configure_uploads(connecsiApp, brands_classified_files)
+configure_uploads(connecsiApp, offer_files)
 configure_uploads(connecsiApp, message_files)
 configure_uploads(connecsiApp, message_agreements)
 
@@ -2364,21 +2367,338 @@ def twitter_login():
 @is_logged_in
 def admin_inf():
     title='Influencer Dashboard'
-    url = 'https://www.googleapis.com/youtube/v3/channels?part=statistics,id,snippet,contentOwnerDetails,status&mine=true'
-    channel_data = google.get(url).json()
+    # url = 'https://www.googleapis.com/youtube/v3/channels?part=statistics,id,snippet,contentOwnerDetails,status&mine=true'
+    # channel_data = google.get(url).json()
 
-    print('channel details = ', channel_data)
+    # print('channel details = ', channel_data)
     return render_template('index_inf.html',title=title)
 
 @connecsiApp.route('/inf_profile')
 @is_logged_in
 def inf_profile():
-    return render_template('user/inf_profile.html')
+    user_id = session['user_id']
+    response = requests.get(url=base_url+'Influencer/getDetailsByUserId/'+str(user_id))
+    profile_data = response.json()
+    print(profile_data)
+    return render_template('user/inf_profile.html',data=profile_data)
 
 @connecsiApp.route('/inf_editProfile')
 @is_logged_in
 def inf_editProfile():
-    return render_template('user/inf_editProfile.html')
+    user_id = session['user_id']
+    # regionCodes_json=''
+    videoCat_json=''
+    response = requests.get(url=base_url + 'Influencer/getDetailsByUserId/' + str(user_id))
+    profile_data = response.json()
+    print(profile_data)
+    try:
+        url_regionCodes = base_url + 'Youtube/regionCodes'
+        response_regionCodes = requests.get(url=url_regionCodes)
+        regionCodes_json = response_regionCodes.json()
+        print(regionCodes_json['data'])
+    except Exception as e:
+        print(e)
+
+    try:
+        url_videoCat = base_url + 'Youtube/videoCategories'
+        response_videoCat = requests.get(url=url_videoCat)
+        videoCat_json = response_videoCat.json()
+        print(videoCat_json)
+    except Exception as e:
+        print(e)
+
+    return render_template('user/inf_editProfile.html',data=profile_data,videoCat=videoCat_json,regionCodes=regionCodes_json)
+
+@connecsiApp.route('/updateProfile_inf',methods=['POST'])
+@is_logged_in
+def updateProfile_inf():
+    user_id = session['user_id']
+    if request.method == 'POST':
+        url = base_url+ 'Influencer/'+str(user_id)
+        payload = request.form.to_dict()
+        youtube_video_categories = request.form.getlist('categories')
+        categories_string = ','.join(youtube_video_categories)
+        payload.update({'categories':categories_string})
+        try:
+            del payload['video_cat']
+        except:pass
+        print(payload)
+        # return ''
+        try:
+            response = requests.put(url=url,json=payload)
+            result_json = response.json()
+            return inf_profile()
+        except:pass
+
+@connecsiApp.route('/addOffer')
+@is_logged_in
+def addOffer():
+    url_regionCodes = base_url + 'Youtube/regionCodes'
+    regionCodes_json = ''
+    try:
+        regionCodes_response = requests.get(url=url_regionCodes)
+        regionCodes_json = regionCodes_response.json()
+        print(regionCodes_json)
+    except:
+        pass
+    url_videoCat = base_url + 'Youtube/videoCategories'
+    videoCat_json = ''
+    try:
+        response_videoCat = requests.get(url=url_videoCat)
+        videoCat_json = response_videoCat.json()
+        print(videoCat_json)
+    except Exception as e:
+        print(e)
+    return render_template('offers/add_offerForm.html', regionCodes=regionCodes_json,
+                           videoCategories=videoCat_json)
+
+@connecsiApp.route('/saveOffer', methods=['POST'])
+@is_logged_in
+def saveOffer():
+    if request.method == 'POST':
+        payload = request.form.to_dict()
+        channels = request.form.getlist('channels')
+        channels_string = ','.join(channels)
+        payload.update({'channels': channels_string})
+
+        regions = request.form.getlist('country')
+        regions_string = ','.join(regions)
+        payload.update({'regions': regions_string})
+
+        arrangements = request.form.getlist('arrangements')
+        arrangements_string = ','.join(arrangements)
+        payload.update({'arrangements': arrangements_string})
+
+        kpis = request.form.getlist('kpis')
+        kpis_string = ','.join(kpis)
+        payload.update({'kpis': kpis_string})
+
+        try:
+            del payload['country']
+        except:
+            pass
+        # print(payload)
+
+        files = request.files.getlist("offer_files")
+        print(files)
+        # exit()
+        filenames = []
+        for file in files:
+            filename = offer_files.save(file)
+            print(filename)
+            filenames.append(filename)
+        filenames_string = ','.join(filenames)
+        payload.update({'files': filenames_string})
+        print('final offer payload = ',payload)
+
+        user_id = session['user_id']
+        url = base_url + 'Offer/' + str(user_id)
+        print(url)
+        # exit()
+        # return ''
+        try:
+            response = requests.post(url=url, json=payload)
+            result_json = response.json()
+            print(result_json)
+            flash('saved Offer', 'success')
+            return viewAllOffers()
+            # return 'offer added'
+        except Exception as e:
+            print(e)
+            flash('Offer didnt saved Please try again later', 'danger')
+            return addOffer()
+            # return 'offer not added'
+
+    else:
+        flash('Unauthorized', 'danger')
+
+@connecsiApp.route('/viewAllOffers', methods=['GET', 'POST'])
+@is_logged_in
+def viewAllOffers():
+    user_id = session['user_id']
+    from templates.offers.offer import Offer
+    offerObj = Offer(user_id=user_id)
+    all_offer_data = offerObj.get_all_offers()
+    view_offer_data_list = []
+    for item in all_offer_data['data']:
+        if item['deleted'] != 'true':
+            view_offer_data_list.append(item)
+    print(view_offer_data_list)
+
+    view_profile_url = base_url + 'Influencer/getDetailsByUserId/' + str(user_id)
+    response = requests.get(view_profile_url)
+    profile_data_json = response.json()
+    print(profile_data_json)
+
+    return render_template('offers/view_all_offer.html',
+                           all_offer_data=view_offer_data_list, profile_data=profile_data_json)
+
+@connecsiApp.route('/viewOfferDetails/<string:offer_id>')
+@is_logged_in
+def viewOfferDetails(offer_id):
+    user_id = session['user_id']
+    from templates.offers.offer import Offer
+    offerObj = Offer(user_id=user_id, offer_id=offer_id)
+    offer_details = offerObj.get_offer_details()
+    print(offer_details)
+    view_profile_url = base_url + 'Influencer/getDetailsByUserId/' + str(user_id)
+    response = requests.get(view_profile_url)
+    profile_data_json = response.json()
+    print(profile_data_json)
+
+    return render_template('offers/viewOfferDetails.html', offer_details=offer_details,
+                           profile_data=profile_data_json)
+
+@connecsiApp.route('/deleteOffer/<string:offer_id>', methods=['GET'])
+@is_logged_in
+def deleteOffer(offer_id):
+    print(offer_id)
+    user_id = session['user_id']
+    url = base_url + 'Offer/' + str(offer_id) + '/' + str(user_id)
+    print(url)
+    try:
+        response = requests.delete(url=url)
+        result_json = response.json()
+        print(result_json)
+        # res = requests.put(url=base_url + 'Campaign/update_campaign_status/' + str(campaign_id) + '/' + 'InActive')
+        flash('Deleted Offer', 'success')
+        return viewAllOffers()
+    except Exception as e:
+        print(e)
+        flash('Please try again later', 'danger')
+        pass
+
+@connecsiApp.route('/deletedOffers', methods=['GET', 'POST'])
+@is_logged_in
+def deletedOffers():
+    user_id = session['user_id']
+    # import templates
+    from templates.offers.offer import Offer
+    offerObj = Offer(user_id=user_id)
+    all_offer_data = offerObj.get_all_offers()
+    deleted_offer_list = []
+    for item in all_offer_data['data']:
+        if item['deleted'] == 'true':
+            deleted_offer_list.append(item)
+
+    print(deleted_offer_list)
+    return render_template('offers/deleted_offers.html', view_offer_data=deleted_offer_list)
+
+@connecsiApp.route('/editOffer/<string:offer_id>', methods=['GET'])
+@is_logged_in
+def editOffer(offer_id):
+    url_regionCodes = base_url + 'Youtube/regionCodes'
+    regionCodes_json = ''
+    try:
+        regionCodes_response = requests.get(url=url_regionCodes)
+        regionCodes_json = regionCodes_response.json()
+        # print(regionCodes_json)
+    except:
+        pass
+    url_videoCat = base_url + 'Youtube/videoCategories'
+    videoCat_json = ''
+    try:
+        response_videoCat = requests.get(url=url_videoCat)
+        videoCat_json = response_videoCat.json()
+        # print(videoCat_json)
+    except Exception as e:
+        print(e)
+    print(offer_id)
+    user_id = session['user_id']
+    from templates.offers.offer import Offer
+    offerObj = Offer(user_id=user_id, offer_id=offer_id)
+    offer_details = offerObj.get_offer_details()
+    print(offer_details)
+    try:
+        for item in offer_details['data']:
+            item['from_date'] = datetime.datetime.strptime(item['from_date'], '%d-%b-%y').date()
+            item['to_date'] = datetime.datetime.strptime(item['to_date'], '%d-%b-%y').date()
+            item['arrangements'] = item['arrangements'].replace('/', '')
+            item['arrangements'] = item['arrangements'].replace(' ', '')
+            item['kpis'] = item['kpis'].replace(' ', '')
+    except Exception as e:
+        print(e)
+    return render_template('offers/edit_offerForm.html',
+                           view_offer_details_data=offer_details,
+                           regionCodes=regionCodes_json, videoCategories=videoCat_json)
+
+@connecsiApp.route('/updateOffer', methods=['POST'])
+@is_logged_in
+def updateOffer():
+    if request.method == 'POST':
+        payload = request.form.to_dict()
+        # print('payload = ',payload)
+        offer_id = request.form.get('offer_id')
+        # exit
+        del payload['offer_id']
+        # print(payload)
+        # print(campaign_id)
+        # exit()
+        channels = request.form.getlist('channels')
+        channels_string = ','.join(channels)
+        payload.update({'channels': channels_string})
+        regions = request.form.getlist('country')
+        regions_string = ','.join(regions)
+        payload.update({'regions': regions_string})
+
+        arrangements = request.form.getlist('arrangements')
+        arrangements_string = ','.join(arrangements)
+        payload.update({'arrangements': arrangements_string})
+
+        kpis = request.form.getlist('kpis')
+        kpis_string = ','.join(kpis)
+        payload.update({'kpis': kpis_string})
+
+        # convert_to_campaign = request.form.get('convert_to_campaign')
+        # print('is classified = ',is_classified_post)
+        try:
+            del payload['country']
+            # del payload['convert_to_campaign']
+        except:
+            pass
+
+        files = request.files.getlist("offer_files")
+        # print(files)
+        # exit()
+        filenames = []
+        for file in files:
+            filename = offer_files.save(file)
+            filenames.append(filename)
+
+        user_id = session['user_id']
+        url_offer = base_url + 'Offer/' + str(offer_id) + '/' + str(user_id)
+        response_offer = requests.get(url=url_offer)
+        result_json_offer = response_offer.json()
+        # print('cam data',result_json_campaign)
+
+        for item in result_json_offer['data']:
+            files_string = item['files']
+            print(files_string)
+            if files_string:
+                filenames.append(files_string)
+
+        filenames_string = ','.join(filenames)
+        print('file name string', filenames_string)
+        payload.update({'files': filenames_string})
+
+        print('last payload', payload)
+
+        url = base_url + 'Offer/' + str(offer_id) + '/' + str(user_id)
+        print(url)
+        try:
+            response = requests.put(url=url, json=payload)
+            result_json = response.json()
+            print(result_json)
+            flash('Updated Offer', 'success')
+            return viewAllOffers()
+        except Exception as e:
+            print(e)
+            flash('Offer didnt saved Please try again later', 'danger')
+            pass
+    else:
+        flash('Unauthorized', 'danger')
+
+
 
         # @connecsiApp.route('/login/authorized')
 # def authorized():

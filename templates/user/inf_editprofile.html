@@ -1,4 +1,4 @@
-{% extends 'dashboard_layout_new.html' %}
+{% extends 'dashboard_layout_inf.html' %}
 {{ super() }}
 {% block body %}
 
@@ -8,49 +8,61 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
+                    {% for item in data['data'] %}
                     <div class="row" style="margin:2%;">
                         <div class="col-xl-2 col-lg-2 col-md-2 mb-1">
-                            {% if data['data']['profile_pic'] %}
-                            <img id="profile_pic" src="static/img/{{ data['data']['profile_pic'] }}" class="rounded-circle img-border gradient-summer width-150" alt="Card image">
+                            {% if item['channel_img'] %}
+                            <img id="profile_pic" src="{{ item['channel_img'] }}" class="img-border gradient-summer width-150" alt="Card image" height="150px" width="150px">
                             {% else %}
-                            <img id="profile_pic" src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer width-150" alt="Card image">
+                            <img id="profile_pic" src="static/img/fixed_image.png" class="img-border gradient-summer width-150" alt="Card image">
                             {% endif %}
                         </div>
-                        <div class="col-xl-6 col-lg-6 col-md-6 mb-1">
-                            <form name="avtar_form" method="POST" action="/uploadProfilePic" enctype=multipart/form-data>
-                            <div class="row" style="padding-top:10%;">
-                                <div class="file-field input-field">
-                                <!--<form id="form1" runat="server">-->
-                                    <input type='file' id="profile_pic_fileinp" name="profile_pic" style="display:block;"/><br>
-                                    <button id="save_profile_pic" type="submit" class="btn btn-sm btn-info" style="display:none;">Save</button>
-                                    <!--<img id="blah" src="#" alt="your image" />-->
-                                </div>
-                            </div>
-                            </form>
-                        </div>
                         <div class="col-xl-4 col-lg-4 col-md-4 mb-1">
-                            <p class="grey font-small-3" style="font-size:20px;">Social Media Accounts:</p>
-                            <a href="{{ data['data']['facebook_url'] }}" target="_blank" class="fa fa-facebook grey" title="facebook" style="font-size:40px; padding-right:10px;"></a>
-                            <a href="{{ data['data']['twitter_url'] }}" target="_blank" class="fa fa-twitter grey" title="twitter" style="font-size:40px; padding-right:10px;"></a>
-                            <a href="{{ data['data']['insta_url'] }}" target="_blank" class="fa fa-instagram grey " title="instagram" style="font-size:40px; padding-right:10px;"></a>
-                            <a href="{{ data['data']['youtube_url'] }}" target="_blank" class="fa fa-youtube grey" title="youtube" style="font-size:40px;"></a>
-                            <a href="#" target="_blank" class="fa fa-plus grey" title="plus" style="font-size:40px;"></a>
+                            <span class="font-medium-2 text-uppercase">{{ item['title'] }}</span>
+                            <div class="grey font-small-3" style="font-size:20px;"></div>
+                            <div class="grey font-small-3" style="font-size:20px;">Subscription Type : Basic</div>
+                            <!--<button class="btn btn-sm" type="button" data-toggle="tooltip" title="Feature Coming Soon" style="background-color: #9E57DD; margin-left: 2%; color:white;font-size:15px;">Upgrade Here</button>-->
+                        </div>
+                        <div class="col-xl-6 col-lg-6 col-md-6 mb-1">
+                            <p class="grey font-small-3" style="font-size:20px;">Accounts:</p>
+                            {% if item['facebook_url'] %}
+                            <a href="{{ item['facebook_url'] }}" target="_blank" class="fa fa-facebook " title="facebook" style="font-size: 40px;color:#3B5998 ;padding: 10px;"></a>
+                            {% else %}
+                            <a href="#" class="fa fa-facebook grey" title="facebook" style="font-size:40px; padding-right:10px;"></a>
+                            {% endif %}
+                            {% if item['twitter_url'] %}
+                            <a href="{{ item['twitter_url'] }}" target="_blank" class="fa fa-twitter" title="twitter" style="font-size:40px; color:#55ACEE padding-right:10px;"></a>
+                            {% else %}
+                            <a href="#"  class="fa fa-twitter grey" title="twitter" style="font-size:40px; padding-right:10px;"></a>
+                            {% endif %}
+                            {% if item['insta_url'] %}
+                            <a href="{{ item['insta_url'] }}" target="_blank" class="fa fa-instagram" title="instagram" style="color:#d6249f; font-size:40px; padding-right:10px;"></a>
+                            {% else %}
+                            <a href="#"  class="fa fa-instagram grey " title="instagram" style="font-size:40px; padding-right:10px;"></a>
+                            {% endif %}
+                            {% if item['youtube_url'] %}
+                            <a href="{{ item['youtube_url'] }}" target="_blank" class="fa fa-youtube" title="youtube" style="color:#bb0000 ;font-size:40px;"></a>
+                            {% else %}
+                            <a href="#"  class="fa fa-youtube grey" title="youtube" style="font-size:40px;"></a>
+                            {% endif %}
                         </div>
                     </div>
+                    {% endfor %}
                 </div>
             </div>
         </div>
-    </div>
 </section>
 <!--Basic User Details Ends-->
 
 <!--About section starts-->
 <section id="about">
-    <form action="/updateProfile" method="POST">
+    <form action="/updateProfile_inf" method="POST">
         <div class="row">
+            {% for item in data['data'] %}
             <div class="col-sm-12">
                 <div class="card">
                     <div class="card-header">
+
                         <h5>Personal Information</h5>
                     </div>
                     <div class="card-body">
@@ -60,54 +72,72 @@
                                     <div class="row" style="margin-bottom: 5px;">
                                         <span class="display-block overflow-hidden">
                                             <label for="first_name">*First Name:</label>
-                                            <input type="text" required class="form-control" id="first_name" name="first_name" value="{{data['data']['first_name']}}" style="width:400px;"> </span>
+                                            <input type="text" required class="form-control" id="first_name" name="first_name" value="{{ item['first_name']}}" style="width:400px;"> </span>
                                     </div>
                                     <div class="row" style="margin-bottom: 5px;">
                                         <span class="display-block overflow-hidden">
                                             <label for="last_name">*Last Name</label>
-                                            <input type="text" required name="last_name" id="last_name" class="form-control" value="{{data['data']['last_name']}}" style="width:400px;"> </span>
+                                            <input type="text" required name="last_name" id="last_name" class="form-control" value="{{ item['last_name']}}" style="width:400px;"> </span>
                                     </div>
+
                                     <div class="row" style="margin-bottom: 5px;">
                                         <span class="display-block overflow-hidden">
-                                            <label for="firm">Firm</label>
-                                            <input type="text" name="firm" id="firm class="form-control" value="{{data['data']['position']}}" placeholder="Firm" style="width:400px;"> </span>
-                                    </div>
-                                    <div class="row" style="margin-bottom: 5px;">
-                                        <span class="display-block overflow-hidden">
-                                            <label for="category">*Category:</label>
-                                            <input type="text"id="category" name="category" class="form-control" value="{{data['data']['city']}}" placeholder="Category(max 3)" style="width:400px;"> </span>
+                                            <label for="videoCategories">Categories</label>
+                                            <select class="form-control" name="categories" multiple>
+                                                {% for item in videoCat['data'] %}
+
+                                                <option id="{{item['video_cat_id']}}" value="{{ item['video_cat_id'] }}">{{ item['video_cat_name'] }}</option>
+                                                {% endfor %}
+                                            </select>
+                                            <script>
+                                                        $( document ).ready(function() {
+                                                        {% set video_cat_ids = item['youtube_video_cat_id'].split(',') %}
+                                                            {% for video_cat_id in video_cat_ids %}
+
+                                                           $('#{{video_cat_id}}').attr("selected", "selected");
+                                                             {% endfor %}
+                                                        });
+                                            </script>
+                                        </span>
                                     </div>
                                     <div class="row" style="margin-bottom: 5px;">
                                         <span class="display-block overflow-hidden">
                                             <label for="city">City:</label>
-                                            <input type="text"id="city" name="city" class="form-control" value="{{data['data']['city']}}" placeholder="City" style="width:400px;"> </span>
-                                    </div>
-                                    <div class="row" style="margin-bottom: 5px;">
-                                        <span class="display-block overflow-hidden">
-                                            <label for="media">*Social Media:</label>
-                                            <input type="text"id="media" name="media" class="form-control" value="{{data['data']['city']}}" placeholder="Social Media Accounts" style="width:400px;"> </span>
+                                            <input type="text"id="city" name="city" class="form-control" value="{{ item['city']}}" placeholder="City" style="width:400px;"> </span>
                                     </div>
                                 </div>
                                 <div class="col-xl-6 col-lg-6 col-md-6 mb-1">
-                                    <div class="row" style="margin-bottom: 5px;">
-                                        <span class="display-block overflow-hidden">
-                                            <label for="email">*Business Email</label>
-                                            <input type="email" disabled class="form-control" id="email" value="{{data['data']['email_id']}}" style="width:400px;"> </span>
-                                    </div>
+                                    <!--<div class="row" style="margin-bottom: 5px;">-->
+                                    <!--<span class="display-block overflow-hidden">-->
+                                    <!--<label for="email">*Business Email</label>-->
+                                    <!--<input type="email" disabled class="form-control" id="email" value="{{item['business_email']}}" style="width:400px;"> </span>-->
+                                    <!--</div>-->
                                     <div class="row" style="margin-bottom: 5px;">
                                         <a class="display-block overflow-hidden">
                                             <label for="phone">Phone</label>
-                                            <input type="text" name="phone" id="phone" class="form-control" value="{{data['data']['phone']}}" placeholder="Phone" style="width:400px;"> </a>
+                                            <input type="text" name="phone" id="phone" class="form-control" value="{{ item['phone'] }}" placeholder="Phone" style="width:400px;"> </a>
                                     </div>
                                     <div class="row" style="margin-bottom: 5px;">
-                                        <a class="display-block overflow-hidden">
-                                            <label for="url">URL:</label>
-                                            <input type="url" id="url" required name="url" class="form-control" value="{{data['data']['url']}}" placeholder="Title" style="width:400px;"> </a>
+                                        <span class="display-block overflow-hidden">
+                                            <label for="website">Website</label>
+                                            <input type="text" id="website" required name="website" class="form-control" value="{{ item['website']}}" placeholder="Website" style="width:400px;"> </span>
                                     </div>
                                     <div class="row" style="margin-bottom: 5px;">
                                         <span class="display-block overflow-hidden">
                                             <label for="country">*Country</label>
-                                            <input type="text" id="country" required name="country" class="form-control" value="{{data['data']['country']}}" placeholder="Country" style="width:400px;"> </span>
+                                            <select class="form-control" name="country" id="country"  required>
+                                                        {% for item in regionCodes['data'] %}
+                                                        <option id="{{item['region_code']}}" value="{{ item['region_code'] }}">{{ item['country_name'] }}</option>
+                                                        {% endfor %}
+                                                     </select>
+                                                    <script>
+                                                        $( document ).ready(function() {
+                                                           $('#{{item['country']}}').attr("selected", "selected");
+                                                        });
+                                                     </script>
+
+                                            <!--<input type="text" id="country" required name="country" class="form-control" value="{{ item['country']}}" placeholder="Country" style="width:400px;"> -->
+                                        </span>
                                     </div>
                                     <!--<div class="row" style="margin-bottom: 5px;">-->
                                     <!--<span class="display-block overflow-hidden">-->
@@ -126,6 +156,7 @@
                     </div>
                 </div>
             </div>
+            {% endfor %}
         </div>
     </form>
 </section>

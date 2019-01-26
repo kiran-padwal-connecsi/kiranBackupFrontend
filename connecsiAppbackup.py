@@ -1406,7 +1406,7 @@ def addClassified():
         print(videoCat_json)
     except Exception as e:
         print(e)
-    return render_template('classifiedAds/add_classifiedForm.html',regionCodes=regionCodes_json,videoCategories = videoCat_json)
+    return render_template('classifiedAds/add_offerForm.html',regionCodes=regionCodes_json,videoCategories = videoCat_json)
 
 
 
@@ -1518,7 +1518,7 @@ def viewAllClassifiedAds():
     from templates.classifiedAds.classified import Classified
     classifiedObj = Classified(user_id=user_id)
     all_classified_data = classifiedObj.get_all_classifieds()
-    return render_template('classifiedAds/view_all_classifiedAds.html',all_classified_data=all_classified_data)
+    return render_template('classifiedAds/view_all_offers.html',all_classified_data=all_classified_data)
 
 
 @connecsiApp.route('/viewClassifiedDetails/<string:classified_id>')
