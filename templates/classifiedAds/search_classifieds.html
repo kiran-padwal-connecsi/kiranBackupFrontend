@@ -1,0 +1,313 @@
+{% extends 'dashboard_layout_inf.html' %}
+{{ super() }}
+{% block body %}
+<style>
+    .title{
+      font-size:14px;
+      color:#11D2DA;
+
+    }
+.views{
+    font-size:10px;
+    color:grey;
+}
+.headers{
+font-size:12px;
+    color:#707070;
+    font-weight:bold;
+    text-align:center;
+}
+.image{
+height:195px;
+width:260px;
+
+}
+.icons{
+color:#9E57DD;
+}
+</style>
+
+<script>
+$( document ).ready(function() {
+        // range slider starts
+        var nonLinearSlider = document.getElementById('slider');
+        noUiSlider.create(nonLinearSlider, {
+	        connect: true,
+	        behaviour: 'tap',
+            start: [0,100000000],
+	        behaviour: 'tap-drag',
+	        tooltips: false,
+	        range: {
+		    // Starting at 500, step the value by 500,
+		    // until 4000 is reached. From there, step by 1000.
+		    'min': [ 0 ],
+		    <!--'10%': [ 500, 500 ],-->
+		    <!--'50%': [ 4000, 1000 ],-->
+		    'max': [ 100000000 ]
+	        },
+	        format: {
+                from: function(value) {
+                    return parseInt(value);
+                },
+            to: function(value) {
+                return parseInt(value);
+                }
+            }
+
+        });
+        var nodes = [
+	        document.getElementById('lower-value'), // 0
+	        document.getElementById('upper-value')  // 1
+        ];
+        // Display the slider value and how far the handle moved
+        // from the left edge of the slider.
+        nonLinearSlider.noUiSlider.on('update', function ( values, handle, unencoded, isTap, positions ) {
+	        nodes[handle].innerHTML = values[handle];
+        });
+        // range slider ends
+});
+</script>
+<script>
+$( document ).ready(function() {
+        // range slider starts
+        var nonLinearSlider = document.getElementById('slider_price');
+        noUiSlider.create(nonLinearSlider, {
+	        connect: true,
+	        behaviour: 'tap',
+            start: [0,100000],
+	        behaviour: 'tap-drag',
+	        tooltips: false,
+	        range: {
+		    // Starting at 500, step the value by 500,
+		    // until 4000 is reached. From there, step by 1000.
+		    'min': [ 0 ],
+		    <!--'10%': [ 500, 500 ],-->
+		    <!--'50%': [ 4000, 1000 ],-->
+		    'max': [ 100000 ]
+	        },
+	        format: {
+                from: function(value) {
+                    return parseInt(value);
+                },
+            to: function(value) {
+                return parseInt(value);
+                }
+            }
+
+        });
+        var nodes = [
+	        document.getElementById('lower-value-price'), // 0
+	        document.getElementById('upper-value-price')  // 1
+        ];
+        // Display the slider value and how far the handle moved
+        // from the left edge of the slider.
+        nonLinearSlider.noUiSlider.on('update', function ( values, handle, unencoded, isTap, positions ) {
+	        nodes[handle].innerHTML = values[handle];
+        });
+        // range slider ends
+});
+</script>
+<script>
+
+    $(document).ready(function(){
+            $("#search_classifieds").submit(function(e) {
+                var form = $(this);
+                var url = form.attr('action');
+                var min_lower = $("#lower-value").text();
+                var max_upper = $("#upper-value").text();
+                var min_lower_price = $("#lower-value-price").text();
+                var max_upper_price = $("#upper-value-price").text();
+
+                $("#min_lower").val(min_lower);
+                $("#max_upper").val(max_upper);
+                $("#min_lower_price").val(min_lower_price);
+                $("#max_upper_price").val(max_upper_price);
+                $('#classifiedData').empty();
+
+                $.ajax({
+                       type: "POST",
+                       url: url,
+                       data: form.serialize(), // serializes the form's elements.
+                       success: function(data)
+                       {
+                           <!--alert(data); // show response from the python script.-->
+                           jQuery.each(data.results, function(i, val) {
+
+                                var file = val.files.split(",");
+                                var channel = val.channels.split(",");
+                                $('#classifiedData').append(
+                                '<div class="col-sm-6">'+
+                                    '<div class="card shadow-sm p-1">'+
+                                         '<div class="card-body bg-white">'+
+                                             '<div class="row">'+
+                                                 '<div class="col-sm text-left title">'+val.classified_name+'</div>'+
+                                                 '<div class="col-sm text-right views"><i class="fa fa-eye"></i> '+val.no_of_views+'</div>'+
+                                             '</div>'+
+                                             '<div class="row">'+
+                                                 '<div class="col-sm text-left"></div>'+
+                                                 '<div class="col-sm text-right views">Posted on : '+val.posted_date+'</div>'+
+                                             '</div>'+
+                                             '<div class="row" style="margin-right:12px;">'+
+                                                 '<div class="col-sm ">'+
+                                                     '<img src="../static/brands_classified_files/'+file[0]+'" class="image ">'+
+                                                 '</div>'+
+                                                 '<div class="col-sm " style="padding:0px;">'+
+                                                     '<div class="row">'+
+                                                         '<div class="col-sm border headers" id="channel'+val.classified_id+'">Channels<br>'+
+
+
+                                                           $.each(channel, function(key, value) {
+                                                                 var channelName = '<a href="#" class="fa fa-'+value+' fa-lg icons"></a>';
+                                                                 <!--var classname = $("'#channel'+val.classified_id+'").attr("class");-->
+                                                                 <!--alert(classname);-->
+                                                              })+
+                                                         '</div>'+
+                                                         '<div class="col-sm border headers">Followers<br>'+
+                                                            '<span class="views">'+val.min_lower_followers+' - '+val.max_upper_followers+'</span>'+
+                                                         '</div>'+
+                                                     '</div>'+
+                                                     '<div class="row">'+
+                                                         '<div class="col-sm  border headers">Categories<br>'+
+                                                            '<span class="views">'+val.video_cat_name+'</span>'+
+                                                         '</div>'+
+                                                         '<div class="col-sm  border headers">Budget<br>'+
+                                                            '<span class="views">'+val.budget+'&nbsp'+val.currency+'</span>'+
+                                                         '</div>'+
+                                                     '</div>'+
+                                                     '<div class="row">'+
+                                                         '<div class="col-sm border headers">Content Type<br>'+
+                                                            '<span class="views">'+val.arrangements+'</span>'+
+                                                         '</div>'+
+                                                     '</div>'+
+                                                 '</div>'+
+                                             '</div>'+
+                                             '<div class="row">'+
+                                                 '<div class="col-sm  views"><br>'+
+                                                     '<img src="/static/img/fixed_image.png" class="img-border gradient-summer " alt="Card image" width="30px" height="30px">'+
+                                                     val.first_name + ' '+ val.last_name+
+                                                 '</div>'+
+                                                 '<div class="col-sm text-center"><br>'+
+                                                     '<a href="/viewClassifiedDetails/'+val.classified_id+'" class="btn btn-sm" style="background-color:#50A9E4; color:white; font-size:12px;">Details</a>'+
+                                                 '</div>'+
+                                             '</div>'
+                                );
+                                $('#offerData').show("slow");
+                           });
+                       }
+                });
+                e.preventDefault(); // avoid to execute the actual submit of the form.
+            });
+    });
+
+</script>
+<div class="container-fluid">
+    <div class="row">
+        <div class="col-sm-12">
+            <div class="card shadow-sm p-1">
+                <div class="card-body bg-white">
+                    <form action="/getClassifieds"  id="search_classifieds">
+                        <div class="row">
+                            <div class="col-sm">
+                                <label for="channel_name">Channel</label>
+                                <select id="channel_name" name="channel_name" class="form-control">
+                                    <option value="Youtube">Youtube</option>
+                                    <option value="Twitter">Twitter</option>
+                                    <option value="Instagram">Instagram</option>
+                                    <option value="Facebook">Facebook</option>
+                                </select>
+                            </div>
+                            <div class="col-sm">
+                                <label for="video_cat">Category</label>
+                                <select class="form-control" id="video_cat" name="video_cat">
+                                    <option value=""></option>
+                                    {% for item in videoCategories['data'] %}
+                                    <option id="{{item['video_cat_id']}}" value="{{ item['video_cat_id'] }}">{{ item['video_cat_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                                <script>
+                                        $( document ).ready(function() {
+
+                                           $('#{#item['video_cat_id']#}').attr("selected", "selected");
+
+                                        });
+                            </script>
+                            </div>
+                            <div class="col-sm">
+                                <label for="country">Country</label>
+                                <select id="country" name="country" class="form-control">
+                                    <option value=""></option>
+                                    {% for item in regionCodes['data'] %}
+                                    <option id="{{item['region_code']}}" value="{{ item['region_code'] }}">{{ item['country_name'] }}</option>
+                                    {% endfor %}
+                                </select>
+                            </div>
+                            <div class="col-sm">
+                                <label for="arrangements">Content-Type</label>
+                                <select id="arrangements" name="arrangements" class="form-control">
+                                    <option value=""></option>
+                                    <option id="Review" value="Review">Review</option>
+                                    <option id="UnboxingGameplay" value="Unboxing / Gameplay">Unboxing / Gameplay</option>
+                                    <option id="ShoutoutMention" value="Shout out/Mention">Shout out/Mention</option>
+                                    <option id="Giveaway" value="Giveaway">Giveaway</option>
+                                    <option id="VideoIntroOutro" value="Video Intro/Outro">video Intro/Outro</option>
+                                    <option id="Tutorial" value="Tutorial">Tutorial</option>
+                                    <option id="BannerplacementURLplacement" value="Banner placement / URL placement">Banner placement / URL placement</option>
+                                    <option id="Sponsorship" value="Sponsorship">Sponsorship</option>
+                                    <option id="OtherExplainindescription" value="Other (Explain in description)">Other (Explain in description)</option>
+                                </select>
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col-sm-1"></div>
+                            <div class="col-sm-4">
+                                <label>Followers range:</label>
+                                <div id="slider"  style="height:10px;" ></div>
+                                <div class="row" style="margin-left:3%;">
+                                    <div class="col-3.5" id="lower-value" style="border:1px solid black; padding-left:1px; padding-right:2px;" ></div>
+                                    <div class="col-6"></div>
+                                    <div class="col-3.5" id="upper-value" style="border:1px solid black; padding-right:2px; padding-left:2px; margin-left:8%;"></div>
+                                </div>
+                                <input type="hidden" name="min_lower" value="" id="min_lower">
+                                <input type="hidden" name="max_upper" value="" id="max_upper">
+                            </div>
+                            <div class="col-sm-1"></div>
+                            <div class="col-sm-2">
+                                <label></label>
+                                <select class="form-control" name="currency" id="currency">
+                                    <option value="USD">USD</option>
+                                    <option value="EUR">EUR</option>
+                                    <option value="GBP">GBP</option>
+                                    <option value="INR">INR</option>
+                                </select>
+                            </div>
+                            <div class="col-sm-3">
+                                <label>Budget :</label>
+                                <div id="slider_price"  style="height:8px;" ></div>
+                                <div class="row" style="margin-left:3%;">
+                                    <div class="col-3.5" id="lower-value-price" style="border:1px solid black; padding-left:1px; padding-right:2px;" ></div>
+                                    <div class="col-6"></div>
+                                    <div class="col-3.5" id="upper-value-price" style="border:1px solid black; padding-right:2px; padding-left:2px; margin-left:8%;"></div>
+                                </div>
+                                <input type="hidden" name="min_lower_price" value="" id="min_lower_price">
+                                <input type="hidden" name="max_upper_price" value="" id="max_upper_price">
+                            </div>
+                        </div>
+                        <br>
+                        <div class="row">
+                            <div class="col text-center" >
+                                <button type="submit" class="btn btn-sm"  style="background-color:#9E57DD;color:white">Search <i class="fa fa-search"></i></button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="container-fluid">
+    <div class="row" id="classifiedData">
+
+    </div>
+</div>
+{% endblock %}

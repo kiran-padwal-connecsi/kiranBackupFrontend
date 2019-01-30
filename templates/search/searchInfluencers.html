@@ -1,6 +1,7 @@
 {% extends 'dashboard_layout_new.html' %}
 {{ super() }}
 {% block body %}
+{% set glob={} %}
 <head>
   <style>
     .text-field {
@@ -172,6 +173,7 @@
           </form>
           <div class="container contents" id="wrapper">
             {% for item in data['data'] %}
+            {% set _ = glob.update({'total_rows':item['total_rows']}) %}
             <div class="lazy">
               <div class="row">
                 <div>
@@ -297,7 +299,34 @@
             </div>
             <br>
             {% endfor %}
-            <!--<div class="h-100 row align-items-center" id="pagination"></div>-->
+            <div class="row" id="pagination">
+              <!--{{ glob.total_rows }}-->
+              <!--{{ payload_form_filter }}-->
+              {% set pages = ((glob.total_rows)/20)|round|int %}
+              <!--{{ pages }}-->
+              {% set _ = glob.update({'offset':0}) %}
+
+              {% for pages in range(pages) %}
+              <form id="" method="POST" action="/searchInfluencers">
+                <input type="hidden" name="channel" value="{{payload_form_filter['channel']}}">
+                <input type="hidden" name="string_word" value="{{payload_form_filter['string_word']}}">
+                <input type="hidden" name="country" value="{{payload_form_filter['country']}}">
+                <input type="hidden" name="min_lower" value="{{payload_form_filter['min_lower']}}">
+                <input type="hidden" name="max_upper" value="{{payload_form_filter['max_upper']}}">
+                <input type="hidden" name="sort_order" value="{{payload_form_filter['sort_order']}}">
+                <input type="hidden" name="category_id" value="{{payload_form_filter['category_id']}}">
+                <input type="hidden" name="offset" value="{{glob.offset}}">
+                {% if payload_form_filter['offset'] == glob.offset %}
+                <button type="submit" class="btn btn-info btn-sm active" name="search_inf">{{loop.index}}</button>
+                {% else %}
+                <button type="submit" class="btn btn-info btn-sm" name="search_inf">{{loop.index}}</button>
+                {% endif %}
+              </form>
+              <div>&nbsp;</div>
+              {% set _ = glob.update({'offset':(glob.offset+20)|int}) %}
+              <!--{{glob.offset}}-->
+              {% endfor %}
+            </div>
           </div>
         </div>
       </div>

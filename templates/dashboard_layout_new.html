@@ -113,6 +113,12 @@
     .noUi-target {
     padding: 0 0px;
 }
+.noUi-connect{
+background-color:#B398EB;
+}
+.noUi-handle{
+border: 5px solid #B398EB !important;
+}
 .noUi-handle:before,
 .noUi-handle:after {
 
@@ -135,10 +141,27 @@ body.modal-open {
     overflow-y: scroll !important;
 }
 
+
+body {
+            -webkit-transition: background-color 1s;
+            transition: background-color 1s;
+        }
+        html, body { min-height: 100%; }
+        body.loading {
+            background: #333 url('http://code.jquery.com/mobile/1.3.1/images/ajax-loader.gif') no-repeat 50% 50%;
+            -webkit-transition: background-color 0;
+            transition: background-color 0;
+            opacity: 0;
+            -webkit-transition: opacity 0;
+            transition: opacity 0;
+        }
+
+
+
     </style>
 </head>
 
-<body data-col="2-columns" class=" 2-columns " onload="onLoad()">
+<body data-col="2-columns" class=" 2-columns loading" onload="onLoad()">
 {% include 'includes/_navbar.html'%}
 <!-- END HEADER -->
 
@@ -312,6 +335,14 @@ function onLoad() {
 }
 </script>
 
-
+<script>
+    var body = document.getElementsByTagName('body')[0];
+var removeLoading = function() {
+    setTimeout(function() {
+        body.className = body.className.replace(/loading/, '');
+    }, 3000);
+};
+removeLoading();
+</script>
 </body>
 </html>

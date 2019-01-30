@@ -110,7 +110,6 @@
                                             <label for="videoCategories">Categories</label>
                                             <select class="form-control" name="video_cat" required>
                                                 {% for item in videoCategories['data'] %}
-
                                                 <option id="{{item['video_cat_id']}}" value="{{ item['video_cat_id'] }}">{{ item['video_cat_name'] }}</option>
                                                 {% endfor %}
                                             </select>
