@@ -5,11 +5,14 @@
 
 <div class="card">
     <div class="card-body">
+        <div class="card-header text-center" style="color:#11D2DA;">
+            My Campaigns
+        </div>
         <div class="table-responsive" style="background-color: white;">
-            <div>
-                <button type="button">All Campaigns</button>
-                <button type="button">Calendar</button>
-            </div>
+            <!--<div>-->
+                <!--<button type="button">My Campaigns</button>-->
+                <!--<button type="button">Calendar</button>-->
+            <!--</div>-->
             <table class="table table-striped">
                 <thead>
                 <tr>
@@ -19,16 +22,16 @@
                     <th scope="col"><b style="font-weight: 500; font-size:16px;">End</b></th>
                     <th scope="col"><b style="font-weight: 500; font-size:16px;">Channels</b></th>
                     <th scope="col"><b style="font-weight: 500; font-size:16px;">Countries</b></th>
-                    <th scope="col"><b style="font-weight: 500; font-size:16px;">Influencers</b></th>
-                    <th scope="col"><b style="font-weight: 500; font-size:16px;">Budget</b></th>
+                    <th scope="col"><b style="font-weight: 500; font-size:16px;">Sponser</b></th>
+                    <th scope="col"><b style="font-weight: 500; font-size:16px;">Remuneration</b></th>
                     <th scope="col"><b style="font-weight: 500; font-size:16px;">ROI</b></th>
                 </tr>
                 </thead>
                 <tbody>
-                {% for item in view_campaign_data %}
+                {% for item in view_inf_campaigns_data['data'] %}
                 <tr>
                     <td>
-                        <a href="/viewCampaignDetails/{{ item['campaign_id'] }}">{{ item['campaign_name'] }}</a>
+                        <a href="/viewInfCampaignDetails/{{ item['proposal_id'] }}">{{ item['campaign_name'] }}</a>
                         {% if item['status'] == 'Proposal Sent' %}
                         <!--{{ item['status'] }}-->
 
@@ -36,8 +39,8 @@
                         <!--{{ item['status'] }}-->
 
                         {% else %}
-                        <a href="/editCampaign/{{ item['campaign_id'] }}"><img src="/static/icons/edit.png" height="14px" width="13px"></a>
-                        <a href="/deleteCampaign/{{ item['campaign_id'] }}"><img src="/static/icons/delete.png" height="14px" width="13px"></a>
+                        <!--<a href="/editCampaign/{{ item['campaign_id'] }}"><img src="/static/icons/edit.png" height="14px" width="13px"></a>-->
+                        <!--<a href="/deleteCampaign/{{ item['campaign_id'] }}"><img src="/static/icons/delete.png" height="14px" width="13px"></a>-->
                         {% endif %}
 
                     </td>
@@ -47,34 +50,33 @@
                         <!--{{ item['campaign_status'] }}-->
                     </td>
 
-                    <td>{{ item['from_date'] }}</td>
-                    <td>{{ item['to_date'] }}</td>
+                    <td>{{ item['proposal_from_date'] }}</td>
+                    <td>{{ item['proposal_to_date'] }}</td>
                     <td>
-                        {% set channels = item['channels'].split(',') %}
+                        {% set channels = item['proposal_channels'].split(',') %}
                         {% for channel in channels %}
-                        {% if channel == 'youtube' %}
-                        <a href="#" class="fa fa-youtube fa-lg" style="color:#9E57DD"></a>
-                        {% elif channel == 'facebook' %}
-                        <a href="#" class="fa fa-facebook fa-lg" style="color:#9E57DD"></a>
-                        {% elif channel == 'twitter' %}
-                        <a href="#" class="fa fa-twitter fa-lg" style="color:#9E57DD"></a>
-                        {% elif channel == 'instagram' %}
-                        <a href="#" class="fa fa-instagram fa-lg" style="color:#9E57DD"></a>
-                        {% endif %}
+                            {% set final_channels = channel.split('@') %}
+                            {% for item_final_channel in final_channels %}
+                            <a href="#" class="fa fa-{{ item_final_channel }} fa-lg" style="color:#9E57DD"></a>
+                            {% endfor %}
                         {% endfor %}
                     </td>
                     <td>
-                        {% for region_name in item['region_name_list'] %}
-                        {{ region_name }},
-                        {% endfor %}
+                        {{ item['regions'] }}
                     </td>
-                    <td>{{ item['no_of_influencers'] }}
-                        <span class="float-right text muted">
-                                <a onclick="searchInfluencers('{{ item['campaign_name'] }}','{{ item['campaign_id'] }}','{{ item['channels'] }}','{{ item['video_cat_name'] }}','{{ item['min_lower_followers'] }}','{{ item['max_upper_followers'] }}','{{ item['regions'] }}')" class="fa fa-user-plus black" data-toggle="modal" data-target="#create_alert_modal" data-tooltip="true" title="Add Influencer" style="font-size:20px;"></a>
-                            <!--<button class="btn btn-sm btn-outline-secondary fa fa-user-plus"></button>-->
-                        </span>
+                    <td>
+                        {% if item['profile_pic'] %}
+                            <img  src="static/img/{{ item['profile_pic'] }}" class="img" height="19px" width="19px">
+                            {% else %}
+                            <img  src="static/img/fixed_image.png" class="img" height="19px" width="19px">
+                            {% endif %}
+                        {{ item['brand_first_name'] }}
+                        <!--<span class="float-right text muted">-->
+                                <!--<a onclick="searchInfluencers('{{ item['campaign_name'] }}','{{ item['campaign_id'] }}','{{ item['channels'] }}','{{ item['video_cat_name'] }}','{{ item['min_lower_followers'] }}','{{ item['max_upper_followers'] }}','{{ item['regions'] }}')" class="fa fa-user-plus black" data-toggle="modal" data-target="#create_alert_modal" data-tooltip="true" title="Add Influencer" style="font-size:20px;"></a>-->
+                            <!--&lt;!&ndash;<button class="btn btn-sm btn-outline-secondary fa fa-user-plus"></button>&ndash;&gt;-->
+                        <!--</span>-->
                     </td>
-                    <td>{{ item['budget'] }} {{ item['currency'] }}</td>
+                    <td>{{ item['proposal_price'] }} {{ item['currency'] }}</td>
                     <td>Coming Soon</td>
                 </tr>
                 {% endfor %}

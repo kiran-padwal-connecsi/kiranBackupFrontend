@@ -1,0 +1,120 @@
+<div style="background-color: white;" class="table-responsive">
+    <!--<ul class="nav nav-tabs">-->
+    <!--{% set channels = view_campaign_details_data['data'][0]['channels'].split(',') %}-->
+    <!--{% for channel in channels %}-->
+    <!--<li class="nav-item">-->
+    <!--<a class="nav-link" data-toggle="tab" href="#{{ channel }}">{{ channel }}</a>-->
+    <!--</li>-->
+    <!--{% endfor %}-->
+    <!--</ul>-->
+    <!--<div class="tab-content">-->
+
+    <!--<div class="tab-pane container fade" id="youtube">-->
+    <table class="table table-bordered table-striped table-hover mystyle" style="background-color: white;">
+        <tr class="mystyle">
+            <th>Influencers</th>
+            <th>Status</th>
+            <th>Channels</th>
+            <th>Cost</th>
+            <th>Revenue</th>
+            <th>Posts</th>
+            <th>Views</th>
+            <th>Clicks</th>
+            <th>New Users</th>
+            <th>Engagement %</th>
+            <th>CPA</th>
+            <th>ROI</th>
+        </tr>
+
+        {% for youtube_inf_data in view_campaign_details_data['data'][0]['youtube_inf_data'] %}
+        <tr>
+            <td>
+                <img  src="{{ youtube_inf_data['channel_img'] }}" class="dropdown rounded-circle img-border gradient-summer width-50">
+                <div class="submenu"  style="display: None">
+
+                                                <span data-toggle="modal" data-target="#sendMessage">
+                        <a  onclick="sendMessage('{{ youtube_inf_data['channel_id'] }}','{{ youtube_inf_data['business_email'] }}')" class="fa fa-envelope " data-toggle="tooltip"  title="Message" style="position: relative; z-index: 1; font-size:14px; color:#9E57DD;"></a>
+                        </span>
+                    {% if youtube_inf_data['ref_link'] %}
+                    <span data-toggle="modal" data-target="#addReport" id="reportIcon{{ youtube_inf_data['channel_id'] }}">
+                                        <a onclick="addReport('{{ view_campaign_details_data['data'][0]['campaign_id'] }}','{{ youtube_inf_data['proposal_channels'] }}')" data-toggle="tooltip" title="Add Report" ><img src="/static/icons/writing.png" height="14px" width="13px"></a>
+                                        </span>
+                    <span data-toggle="modal" data-target="#edit_del_report_screen" id="editReportIcon{{ youtube_inf_data['channel_id'] }}" style="display:None;">
+                                        <a onclick="edit_del_Report('{{ view_campaign_details_data['data'][0]['campaign_id'] }}','{{ youtube_inf_data['proposal_channels'] }}')" data-toggle="tooltip" title="Edit/Delete Report" ><img src="/static/icons/writing.png" height="14px" width="13px"></a>
+                                        </span>
+                    <a  href="{{ youtube_inf_data['ref_link'] }}" class="fa fa-link " data-toggle="tooltip"  title="Reference Link" style="position: relative; z-index: 1; font-size:14px; color:#9E57DD;"></a>
+                    {% endif %}
+                    <a data-toggle="tooltip" title="Payment Feature Coming Soon" href="#"><img src="/static/icons/payment-method.png" height="14px" width="13px"></a>
+                </div>
+
+                <a class="show" id="{{ youtube_inf_data['channel_id'] }}">
+                    {{ youtube_inf_data['title'] }}
+                </a>
+            </td>
+
+            <td>
+                {% for status in channel_status_campaign_data['data'] %}
+                {% if youtube_inf_data['channel_id']==status['channel_id']  %}
+                {{ status['status'] }}
+                {% endif %}
+                {% endfor %}
+            </td>
+            <td>
+                {% if youtube_inf_data['proposal_channels'] %}
+                {% set channels = youtube_inf_data['proposal_channels'].split(',') %}
+                {% for channel in channels %}
+                {% set channel_final = channel.split('@') %}
+                {% if channel_final[0] == 'youtube' %}
+                <a href="#" class="fa fa-youtube fa-lg" style="color:#9E57DD ;"></a>
+                {% elif channel_final[0] == 'facebook' %}
+                <a href="#" class="fa fa-facebook fa-lg " style="color:#9E57DD ;"></a>
+                {% elif channel_final[0] == 'twitter' %}
+                <a href="#" class="fa fa-twitter fa-lg" style="color:#9E57DD ;"></a>
+                {% elif channel_final[0] == 'instagram' %}
+                <a href="#" class="fa fa-instagram fa-lg " style="color:#9E57DD ;"></a>
+                {% endif %}
+                {% endfor %}
+                {% endif %}
+            </td>
+            <td ></td>
+            <td id="revenue_total{{ youtube_inf_data['channel_id'] }}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td id="new_users_total{{ youtube_inf_data['channel_id'] }}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+        {% if youtube_inf_data['proposal_channels'] %}
+        {% set channels = youtube_inf_data['proposal_channels'].split(',') %}
+        {% for channel in channels %}
+        {% set channel_final = channel.split('@') %}
+
+        <tr style="display:none;" class="{{ youtube_inf_data['channel_id'] }}">
+            <td>
+                <!--<a href="#" data-toggle="tooltip" title="Add Report"><img src="/static/icons/writing.png" height="14px" width="13px"></a>-->
+                <!--<a href="#" data-toggle="tooltip" title="Edit Report"><img src="/static/icons/edit.png" height="14px" width="13px"></a>-->
+                <!--<a id="delReport{{ channel_final[1] }}" data-toggle="tooltip" title=" Delete Report"><img src="/static/icons/delete.png" height="14px" width="13px"></a>-->
+            </td>
+            <td></td>
+            <td id="channel">{{ channel_final[0] }}</td>
+            <td></td>
+            <td id="revenue{{ channel_final[1] }}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+            <td id="new_users{{ channel_final[1] }}"></td>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+
+        {% endfor %}
+
+        {% endif %}
+
+        {% endfor %}
+
+    </table>
+</div>

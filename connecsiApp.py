@@ -751,6 +751,20 @@ def viewCampaigns():
     print(view_campaign_data_list)
     return render_template('campaign/viewCampaigns.html',view_campaign_data=view_campaign_data_list)
 
+
+@connecsiApp.route('/viewInfCampaigns',methods=['GET','POST'])
+@is_logged_in
+def viewInfCampaigns():
+    channel_id = session['user_id']
+    url = base_url+'Influencer/getMyCampaigns/'+str(channel_id)
+    response = requests.get(url=url)
+    response_json = response.json()
+    print(response_json)
+    return render_template('campaign/view_all_inf_campaigns.html',view_inf_campaigns_data=response_json)
+
+
+
+
 @connecsiApp.route('/getCampaigns',methods=['GET','POST'])
 @is_logged_in
 def getCampaigns():
@@ -786,6 +800,72 @@ def viewCampaignDetails(campaign_id):
             resposnse = requests.put(url=base_url + 'Campaign/update_campaign_status/' + str(campaign_id) + '/' + str(campaign_status))
 
     return render_template('campaign/viewCampaignDetails.html',view_campaign_details_data=view_campaign_details_data,channel_status_campaign_data=channel_status_campaign_data)
+
+
+@connecsiApp.route('/viewInfCampaignDetails/<string:proposal_id>',methods=['GET'])
+@is_logged_in
+def viewInfCampaignDetails(proposal_id):
+    channel_id = session['user_id']
+    url = base_url+'Influencer/getMyCampaignDetails/'+str(channel_id)+'/'+str(proposal_id)
+    response = requests.get(url=url)
+    view_inf_campaign_details_data = response.json()
+    print('inf data',view_inf_campaign_details_data)
+
+    bcr_list = []
+    for item in view_inf_campaign_details_data['data']:
+        user_id = item['user_id']
+        campaign_id=item['campaign_id']
+        proposal_channels= item['proposal_channels']
+        channel_id_list = proposal_channels.split(',')
+        for channel in channel_id_list:
+            channel_id_final = channel.split('@')
+            print(channel_id_final)
+            url = base_url + 'Campaign/BrandCampaignReport/' + str(user_id) + '/' + str(campaign_id) +'/'+str(channel_id_final[1])
+            response_bcr = requests.get(url=url)
+            brand_campaign_report = response_bcr.json()
+            bcr_list.append(brand_campaign_report)
+            # print('bcr data', brand_campaign_report)
+    print(bcr_list)
+    return render_template('campaign/view_inf_campaign_details.html',
+                           view_inf_campaign_details_data=view_inf_campaign_details_data,
+                           bcr=bcr_list)
+
+
+
+@connecsiApp.route('/saveInfReport', methods=['POST'])
+@is_logged_in
+def saveInfReport():
+    payload = request.form.to_dict()
+    campaign_id = request.form.get('campaign_id')
+    channel_id = request.form.get('channel_id')
+    proposal_id = request.form.get('proposal_id')
+    url = base_url + 'Campaign/InfluencerCampaignReport/' + str(campaign_id) + '/' + str(proposal_id)+'/'+str(channel_id)
+    print(payload)
+    print(url)
+    try:
+        response = requests.post(url=url, json=payload)
+        data = response.json()
+        inf_campaign_report_res = requests.get(url=url)
+        inf_campaign_report = inf_campaign_report_res.json()
+        print(inf_campaign_report)
+        return jsonify(results=inf_campaign_report['data'])
+    except Exception as e:
+        print(e)
+        return 'server error'
+
+
+@connecsiApp.route('/getInfCampaignReports/<string:campaign_id>/<string:proposal_id>/<string:channel_id>',methods=['GET','POST'])
+def getInfCampaignReports(campaign_id,proposal_id,channel_id):
+    try:
+        print(campaign_id,proposal_id,channel_id)
+        url = base_url + 'Campaign/InfluencerCampaignReport/' + str(campaign_id) + '/' + str(proposal_id) + '/' + str(channel_id)
+        inf_campaign_report_res = requests.get(url=url)
+        inf_campaign_report = inf_campaign_report_res.json()
+        print(inf_campaign_report)
+        return jsonify(results=inf_campaign_report['data'])
+    except Exception as e:
+        print(e)
+        return 'server error'
 
 @connecsiApp.route('/getCampaignDetails/<string:campaign_id>',methods=['GET'])
 @is_logged_in
@@ -2111,6 +2191,7 @@ def getBrandReport(campaign_id):
     try:
         bcr_data = requests.get(url=url)
         response_json = bcr_data.json()
+        print(response_json)
         return jsonify(results=response_json['data'])
     except Exception as e:
         print(e)
@@ -2184,7 +2265,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-# os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
+os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 # os.environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 
@@ -2216,6 +2297,7 @@ def google_login():
         print('i m here always')
         return redirect(url_for("google.login"))
     resp = google.get("/oauth2/v2/userinfo")
+    # resp = google.get("/oauth2/v2/youtube.readonly")
     url = 'https://www.googleapis.com/youtube/v3/channels?part=statistics,id,snippet,contentOwnerDetails,status&mine=true'
     channel_data = google.get(url).json()
     print('channel details = ',channel_data)
