@@ -812,6 +812,7 @@ def viewInfCampaignDetails(proposal_id):
     print('inf data',view_inf_campaign_details_data)
 
     bcr_list = []
+    infcr=[]
     for item in view_inf_campaign_details_data['data']:
         user_id = item['user_id']
         campaign_id=item['campaign_id']
@@ -824,11 +825,19 @@ def viewInfCampaignDetails(proposal_id):
             response_bcr = requests.get(url=url)
             brand_campaign_report = response_bcr.json()
             bcr_list.append(brand_campaign_report)
+            infcr_url = base_url + 'Campaign/InfluencerCampaignReport/' + str(campaign_id) + '/' + str(proposal_id) + '/' + str(channel_id_final[1])
+            response_infcr = requests.get(url=infcr_url)
+            infcr.append(response_infcr.json())
             # print('bcr data', brand_campaign_report)
     print(bcr_list)
+    print('infcr = ',infcr)
+    # for item in infcr:
+    #     # print(item['data'])
+    #     for item1 in item['data']:
+    #         print(item1)
     return render_template('campaign/view_inf_campaign_details.html',
                            view_inf_campaign_details_data=view_inf_campaign_details_data,
-                           bcr=bcr_list)
+                           bcr=bcr_list,infcr=infcr)
 
 
 
@@ -853,6 +862,55 @@ def saveInfReport():
         print(e)
         return 'server error'
 
+
+@connecsiApp.route('/delInfReport/<string:inf_campaign_report_id>', methods=['GET'])
+@is_logged_in
+def delInfReport(inf_campaign_report_id):
+
+    del_report_url = base_url + 'Campaign/getInfluencerCampaignReportByReportId/' + str(inf_campaign_report_id)
+
+    try:
+        response = requests.delete(url=del_report_url)
+        data = response.json()
+
+        # url = base_url + 'Campaign/InfluencerCampaignReport/' + str(campaign_id) + '/' + str(proposal_id) + '/' + str(channel_id)
+        # inf_campaign_report_res = requests.get(url=url)
+        # inf_campaign_report = inf_campaign_report_res.json()
+        # print(inf_campaign_report)
+        return 'Successfully Deleted'
+    except Exception as e:
+        print(e)
+        return 'server error'
+
+@connecsiApp.route('/updateInfReport', methods=['POST'])
+@is_logged_in
+def updateInfReport():
+    payload = request.form.to_dict()
+    inf_campaign_report_id = request.form.get('inf_campaign_report_id')
+    update_report_url = base_url + 'Campaign/getInfluencerCampaignReportByReportId/' + str(inf_campaign_report_id)
+    try:
+        response = requests.put(url=update_report_url,json=payload)
+        data = response.json()
+        return 'Successfully Updated'
+    except Exception as e:
+        print(e)
+        return 'server error'
+
+
+@connecsiApp.route('/getInfReportByReportId/<string:inf_campaign_report_id>', methods=['GET'])
+@is_logged_in
+def getInfReportByReportId(inf_campaign_report_id):
+
+    get_report_url = base_url + 'Campaign/getInfluencerCampaignReportByReportId/' + str(inf_campaign_report_id)
+
+    try:
+        response = requests.get(url=get_report_url)
+        data = response.json()
+        print(data)
+        return jsonify(results=data['data'])
+    except Exception as e:
+        print(e)
+        return 'server error'
 
 @connecsiApp.route('/getInfCampaignReports/<string:campaign_id>/<string:proposal_id>/<string:channel_id>',methods=['GET','POST'])
 def getInfCampaignReports(campaign_id,proposal_id,channel_id):
@@ -2206,7 +2264,7 @@ def getBrandReportByCampaignIdAndChannelIds(campaign_id,proposal_channels):
     url = base_url + 'Campaign/BrandCampaignReport/' + str(user_id) + '/' + str(campaign_id)
     bcr_data = requests.get(url=url)
     bcr_response_json = bcr_data.json()
-    print(bcr_response_json)
+    print('bcr report = ',bcr_response_json)
     # exit()
     bcr_dict = {'data': ''}
     data=[]
