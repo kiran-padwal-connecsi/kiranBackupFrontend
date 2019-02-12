@@ -2129,14 +2129,20 @@ def viewAllClassifiedAds():
 @is_logged_in
 def viewClassifiedDetails(classified_id):
     user_id=session['user_id']
+    # user_id = ''
     from templates.classifiedAds.classified import Classified
     classifiedObj = Classified(user_id=user_id,classified_id=classified_id)
     classified_details = classifiedObj.get_classified_details()
     print(classified_details)
+    for item in classified_details['data']:
+        print(item)
+        user_id= item['user_id']
+        print(user_id)
     view_profile_url = base_url + 'Brand/' + str(user_id)
     response = requests.get(view_profile_url)
     profile_data_json = response.json()
     print(profile_data_json)
+
     return render_template('classifiedAds/viewClassifiedDetails.html',classified_details=classified_details,profile_data=profile_data_json)
 
 @connecsiApp.route('/addYoutubeInfToCampaignList',methods=['POST'])
@@ -2642,11 +2648,14 @@ def viewAllOffers():
 @is_logged_in
 def viewOfferDetails(offer_id):
     user_id = session['user_id']
+    channel_id=''
     from templates.offers.offer import Offer
     offerObj = Offer(user_id=user_id, offer_id=offer_id)
     offer_details = offerObj.get_offer_details()
     print(offer_details)
-    view_profile_url = base_url + 'Influencer/getDetailsByUserId/' + str(user_id)
+    for item in offer_details['data']:
+        channel_id=item['channel_id']
+    view_profile_url = base_url + 'Influencer/getDetailsByUserId/' + str(channel_id)
     response = requests.get(view_profile_url)
     profile_data_json = response.json()
     print(profile_data_json)

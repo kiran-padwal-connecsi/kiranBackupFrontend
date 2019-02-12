@@ -195,7 +195,7 @@
                                 <td id="new_users_total{{ session['user_id'] }}"></td>
                                 <td id="total_eng_rate{{ session['user_id'] }}"></td>
                                 <td id="total_cpa{{session['user_id']}}"></td>
-                                <td></td>
+                                <td>Comming soon..</td>
                             </tr>
                             {% if youtube_inf_data['proposal_channels'] %}
                             {% set channels = youtube_inf_data['proposal_channels'].split(',') %}
@@ -239,15 +239,20 @@
                             var consolidated_total_followers = 0;
                             var consolidated_total_eng_rate = 0;
                             var consolidated_total_cpa = 0;
-
-                                 {% for item in bcr %}
+                                {% if bcr[0]['data']|length != 0 %}
+                                <!--alert('{{ bcr[0]['data']|length }}');-->
+                                {% for item in bcr %}
                                     $('#revenue{{item['data'][0]['channel_id']}}').text({{ item['data'][0]['revenue_generated'] }});
                                     $('#new_users{{item['data'][0]['channel_id']}}').text({{ item['data'][0]['new_users'] }});
                                     revenue_total += parseInt({{ item['data'][0]['revenue_generated'] }});
                                     new_users_total += parseInt({{ item['data'][0]['new_users'] }});
-
                                  {% endfor %}
-                                 {% for item in infcr %}
+                                {% endif %}
+                                alert('{{ infcr[0]['data']|length }}');
+                                <!--{% if infcr[0]['data']|length != 0 %}-->
+                                alert('i m inside infcr');
+                                var total_followers=0;
+                                {% for item in infcr %}
                                     var total_posts = 0;
                                     var total_views = 0;
                                     var total_clicks = 0;
@@ -256,6 +261,7 @@
                                     var total_shares =0;
                                     var youtube_total_followers = 0;
                                     var twitter_total_followers = 0;
+                                    <!--var total_followers=0;-->
                                     var total_eng_rate = 0;
                                     var total_cpa = 0;
                                     var channel_id ='';
@@ -268,15 +274,23 @@
                                        total_comments += parseInt({{item1['post_comments']}});
                                        total_shares += parseInt({{item1['post_shares']}});
                                        channel_id = '{{item1['channel_id']}}';
-                                    {% endfor %}
+
                                     <!--alert(total_posts);-->
-                                    youtube_total_followers = {{item['data'][0]['youtube_total_followers']|int}};
-                                    twitter_total_followers = {{item['data'][0]['twitter_total_followers']|int}};
-                                    total_followers = youtube_total_followers+twitter_total_followers;
+
+                                    {% if item1['youtube_total_followers'] or item1['twitter_total_followers']  %}
+                                        alert('i m inside total followers');
+                                        youtube_total_followers = {{item['data'][0]['youtube_total_followers']|int}};
+                                        twitter_total_followers = {{item['data'][0]['twitter_total_followers']|int}};
+                                        alert('youtube followers ='+youtube_total_followers);
+                                        alert('twitter followers ='+twitter_total_followers);
+                                        total_followers += youtube_total_followers+twitter_total_followers;
+
+                                    {% endif %}
+                                    {% endfor %}
                                     $('#posts'+channel_id).text(total_posts);
                                     $('#views'+channel_id).text(total_views);
                                     $('#clicks'+channel_id).text(total_clicks);
-                                    
+
 
                                     consolidated_total_posts += total_posts;
                                     consolidated_total_views += total_views;
@@ -287,6 +301,7 @@
 
                                  {% endfor %}
 
+                                <!--{% endif %}-->
                             $('#revenue_total{{session['user_id']}}').text(revenue_total);
                             $('#new_users_total{{session['user_id']}}').text(new_users_total);
                             $('#total_posts{{session['user_id']}}').text(consolidated_total_posts);
@@ -294,9 +309,13 @@
                             $('#total_clicks{{session['user_id']}}').text(consolidated_total_clicks);
                             consolidated_total_cpa = new_users_total/{{glob.proposal_price}}
                             consolidated_total_cpa = consolidated_total_cpa.toFixed(2);
+                            if (consolidated_total_posts != 0 && total_followers != 0){
+                                alert('total followers= '+total_followers);
+                                consolidated_total_eng_rate = (consolidated_total_likes+consolidated_total_comments+consolidated_total_shares/consolidated_total_posts)/total_followers;
+                                consolidated_total_eng_rate = consolidated_total_eng_rate.toFixed(5);
+                                consolidated_total_eng_rate = consolidated_total_eng_rate*100;
+                            }
 
-                            consolidated_total_eng_rate = (consolidated_total_likes+consolidated_total_comments+consolidated_total_shares/consolidated_total_posts)/total_followers;
-                            consolidated_total_eng_rate = consolidated_total_eng_rate.toFixed(2);
                             $('#total_cpa{{session['user_id']}}').text(consolidated_total_cpa);
                             $('#total_eng_rate{{session['user_id']}}').text(consolidated_total_eng_rate);
                              });

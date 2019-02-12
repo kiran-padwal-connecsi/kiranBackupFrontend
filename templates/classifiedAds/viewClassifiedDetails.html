@@ -40,7 +40,15 @@ color:#9E57DD;
             <div class="card shadow-sm p-1">
                 <div class="card-body bg-white">
                     <div class="row">
-                        <div class="col-sm text-left"><a href="/viewAllClassifiedAds">Back</a></div>
+                        {% if session['type']=='brand' %}
+                        <div class="col-sm text-left">
+                            <a href="/viewAllClassifiedAds">Back</a>
+                        </div>
+                        {% else %}
+                        <div class="col-sm text-left">
+
+                        </div>
+                        {% endif %}
                         <div class="col-sm text-center title">{{ item['classified_name'] }}</div>
                         <div class="col-sm text-right views"><i class="fa fa-eye"></i> {{item['no_of_views']}}</div>
                     </div>
@@ -71,10 +79,12 @@ color:#9E57DD;
                             {{ profile_data['data']['first_name'] }} {{ profile_data['data']['last_name'] }}
 
                                 </div>
+                                {% if session['type']=='brand' %}
                                 <div class="col-sm float-right text-right">
                                     <a href="/editClassified/{{ item['classified_id'] }}" data-toggle="tooltip" title="Edit Classified"><img src="/static/icons/edit.png" height="19px" width="17px"></a>
                                     <a href="/deleteClassified/{{ item['classified_id'] }}" id="" data-toggle="tooltip" title=" Delete Classified"><img src="/static/icons/delete.png" height="19px" width="17px"></a>
                                 </div>
+                                {% endif %}
                             </div>
                             <div class="row">
                                 <div class="col-sm border headers ">Channels<br>
