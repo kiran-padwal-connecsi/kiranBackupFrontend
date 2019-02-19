@@ -676,6 +676,17 @@ $( document ).ready(function() {
                   <span class="display-block"><input required type="text" class="form-control" name="subject" > </span>
                 </li>
                 <li class="mb-2">
+                  <span class="text-bold-500 primary"><a><i class=" font-small-3"></i>Campaigns :</a></span>
+                  <span class="display-block">
+                    <select name="campaign_id" id="message_campaign_id">
+                      <option value=""></option>
+                      {% for item in view_campaign_data['data'] %}
+                      <option value="{{item['campaign_id']}}">{{item['campaign_name']}}</option>
+                      {% endfor %}
+                    </select>
+                  </span>
+                </li>
+                <li class="mb-2">
                   <span class="text-bold-500 primary"><a><i class=" font-small-3"></i>Message:</a></span>
                   <span class="display-block"><textarea class="form-control" name="message"></textarea> </span>
                 </li>
@@ -778,6 +789,34 @@ function updateChannelStatusForCampaign(channel_id){
              });
 
 }
+function updateChannelStatusForCampaignByCampaignId(campaign_id){
+    <!--alert(channel_id);-->
+    <!--alert(campaign_id);-->
+    $.ajax({
+               type: "GET",
+               url: '/getChannelStatusForCampaignByCampaignId/'+campaign_id,
+               contentType: 'application/json;charset=UTF-8',
+               success: function(data)
+               {
+                   <!--$( '#status'+channel_id).empty();-->
+                   if (data.results.length != 0){
+                   jQuery.each(data.results, function(i, val) {
+
+                        <!--alert(val.campaign_name);-->
+                        <!--alert(val.status);-->
+
+                            $('#status'+val.channel_id).append('<b style="font-weight:450; font-size:15px;">'+val.campaign_name+'<br/></b>');
+                            $('#status'+val.channel_id).append('<b style="font-weight:400; color:orange; font-size:15px;">'+val.status+'</b>');
+                            $('#status'+val.channel_id).append('<hr style="height:0px; margin:auto;">');
+                    });
+                    }
+                    else{
+                        $('#status'+val.channel_id).append('<b>No Campaigns</b>');
+                    }
+               }
+             });
+
+}
 </script>
 
 <script>
@@ -819,9 +858,12 @@ $("#send_message_form").submit(function(e) {
     });
 
 
-{% for item in data['data'] %}
-  updateChannelStatusForCampaign('{{ item['channel_id'] }}');
-{% endfor %}
+  {% for item1 in view_campaign_data['data'] %}
+    updateChannelStatusForCampaignByCampaignId('{{ item1['campaign_id'] }}');
+  {% endfor %}
+
+
+
 
 
 

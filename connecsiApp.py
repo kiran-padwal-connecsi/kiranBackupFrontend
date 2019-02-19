@@ -760,6 +760,8 @@ def viewInfCampaigns():
     response = requests.get(url=url)
     response_json = response.json()
     print(response_json)
+    for item in response_json['data']:
+        print(item)
     return render_template('campaign/view_all_inf_campaigns.html',view_inf_campaigns_data=response_json)
 
 
@@ -2172,6 +2174,22 @@ def getChannelStatusForCampaign(channel_id):
         return jsonify(results=response_json['data'])
     except Exception as e:
         print(e)
+
+@connecsiApp.route('/getChannelStatusForCampaignByCampaignId/<string:campaign_id>',methods=['GET'])
+@is_logged_in
+def getChannelStatusForCampaignByCampaignId(campaign_id):
+    print(campaign_id)
+    url=base_url+'Campaign/channel_status_for_campaign_by_campaign_id/'+str(campaign_id)
+    print(url)
+    try:
+        channel_status_for_campaign = requests.get(url=url)
+        response_json = channel_status_for_campaign.json()
+        print(response_json)
+        return jsonify(results=response_json['data'])
+    except Exception as e:
+        print(e)
+
+
 
 
 @connecsiApp.route('/delFavInf/<string:channel_id>/<string:user_id>',methods=['GET'])
