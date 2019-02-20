@@ -422,7 +422,7 @@ def searchInfluencers():
                 item.update({'linechart_id':linechart_id})
                # print(item)
                 linechart_id+=1
-
+            exportCsv(data=data)
             return render_template('search/searchInfluencers.html', regionCodes=regionCodes_json,
                                    lookup_string=lookup_string, form_filters=form_filters,data=data,view_campaign_data=view_campaign_data
                                    ,favInfList_data=favInfList_data,payload_form_filter=payload)
@@ -2095,7 +2095,7 @@ def exportCsv(data):
     print('my data = ', data)
     print(os.getcwd())
     cwd = os.getcwd()
-    with open(cwd+'/infList.csv', mode='w') as csv_file:
+    with open(cwd+'/static/infList.csv', mode='w') as csv_file:
     # with open(cwd+'/infList.csv', mode='w') as csv_file:
         fieldnames = ['Channel Name', 'Total Followers', 'Avg Views/video','Avg Likes/video','Avg Comments/video']
         writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
