@@ -197,7 +197,7 @@
                                         {% endfor %}
                                  {% endif %}
                                 </td>
-                                <td ></td>
+                                <td id="proposal_price{{ youtube_inf_data['channel_id'] }}">{{youtube_inf_data['proposal_price']}}</td>
                                 <td id="revenue_total{{ youtube_inf_data['channel_id'] }}"></td>
                                 <td></td>
                                 <td></td>
@@ -529,13 +529,20 @@ function getBrandReport(campaign_id) {
                                                             total_new_users += val.new_users;
                                                             <!--alert(total_revenue);-->
                                                             <!--alert(val.channel_id);-->
+
                                                         }
 
                                                     {% endfor %}
 
                                                 });
 
+
+
                                         <!--alert(total_revenue);-->
+                                        <!--alert(val.channel_id);-->
+                                        <!--$("#proposal_price{{ youtube_inf_data['channel_id'] }}").html(total_revenue);-->
+                                        $("#revenue_total{{ youtube_inf_data['channel_id'] }}").html(total_revenue);
+                                        $("#new_users_total{{ youtube_inf_data['channel_id'] }}").html(total_new_users);
 
                              {% endif %}
                        {% endfor %}
