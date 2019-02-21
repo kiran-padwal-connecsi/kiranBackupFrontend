@@ -463,8 +463,8 @@ function sendMessage(channel_id,to_email_id) {
     $("#to_email_id").val(to_email_id);
 }
 function addReport(campaign_id,proposal_channels) {
-    alert(campaign_id);
-    alert(proposal_channels);
+    <!--alert(campaign_id);-->
+    <!--alert(proposal_channels);-->
     $("#brand_report_campaign_id").empty();
     $("#brand_report_campaign_id").val(campaign_id);
     var channels  = proposal_channels.split(',');
@@ -494,8 +494,8 @@ function addReport(campaign_id,proposal_channels) {
 
 
 function edit_del_Report(campaign_id,proposal_channels) {
-    alert(campaign_id);
-    alert(proposal_channels);
+    <!--alert(campaign_id);-->
+    <!--alert(proposal_channels);-->
     $("#editReport").attr("onclick","getBrandReportByCampaignIdAndChannelIds('"+campaign_id+"','"+proposal_channels+"')");
     $("#delReport").attr("onclick","delBrandReport('"+campaign_id+"','"+proposal_channels+"')");
 
@@ -521,14 +521,14 @@ function getBrandReport(campaign_id) {
                                                 jQuery.each(data.results, function(i, val) {
                                                     {% for channel in channels %}
                                                     {% set channel_final = channel.split('@') %}
-                                                            alert("jquery"+val.channel_id);
-                                                            alert("jinja"+'{{channel}}');
+                                                            <!--alert("jquery"+val.channel_id);-->
+                                                            <!--alert("jinja"+'{{channel}}');-->
                                                         if(val.channel_id == '{{channel_final[1]}}'){
-                                                            alert('equal');
+                                                            <!--alert('equal');-->
                                                             total_revenue += val.revenue_generated;
                                                             total_new_users += val.new_users;
-                                                            alert(total_revenue);
-                                                            alert(val.channel_id);
+                                                            <!--alert(total_revenue);-->
+                                                            <!--alert(val.channel_id);-->
                                                         }
 
                                                     {% endfor %}

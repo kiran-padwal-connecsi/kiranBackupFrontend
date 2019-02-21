@@ -508,7 +508,7 @@ function getMessageAgreements(message_id){
 //message_files preview start
 
         $('#message_files_form').on('change', 'input:file',function(){
-            alert('i m here in message files');
+            <!--alert('i m here in message files');-->
             readURL_files(this);
             $(this).hide();
             $(".displayMessageFiles").before('<input type = "file" name="message_files">');
@@ -530,7 +530,7 @@ function getMessageAgreements(message_id){
 //message_agreements preview start
 
         $('#message_agreements_form').on('change', 'input:file',function(){
-            alert('i m here in agreements');
+            <!--alert('i m here in agreements');-->
             readURL_agreements(this);
             $(this).hide();
             $(".displayMessageAgreements").before('<input type = "file" name="message_agreements">');
@@ -583,7 +583,7 @@ function getProposal(message_id,campaign_id){
                {
                    <!--alert(data); // show response from the python script.-->
                    jQuery.each(data.results, function(i, val) {
-                        alert(val.campaign_name);
+                        <!--alert(val.campaign_name);-->
                         $('#view_proposal_campaign_name').empty();
                         $('#view_proposal_campaign_name').append('Campaign Name : '+val.campaign_name);
                         $('#view_proposal_description').empty();
@@ -672,7 +672,7 @@ function updateChannelStatusForCampaign(channel_id){
 }
 
 function getAllMappedChannel_ids(channel_id){
-    alert(channel_id);
+    <!--alert(channel_id);-->
     <!--alert('mapped = '+channel_id);-->
     $.ajax({
                type: "GET",
@@ -684,8 +684,8 @@ function getAllMappedChannel_ids(channel_id){
                    <!--$( '#twitter_channel_id').empty();-->
                    if (data.results.length != 0){
                    jQuery.each(data.results, function(i, val) {
-                        alert(val.youtube_channel_id);
-                        alert(val.twitter_channel_id);
+                        <!--alert(val.youtube_channel_id);-->
+                        <!--alert(val.twitter_channel_id);-->
                             if(val.youtube_channel_id){
                                 <!--$( '#youtube_channel_id').val(val.youtube_channel_id);-->
                                 <!--$( '#youtube_channel_id').val('youtube');-->
@@ -713,7 +713,7 @@ function getAllMappedChannel_ids(channel_id){
     $( document ).ready(function() {
 
     $("#message_agreements_form").submit(function(e) {
-        alert('message agreements form');
+        <!--alert('message agreements form');-->
         var form = $(this);
         var url = form.attr('action');
         $.ajax({
@@ -737,7 +737,7 @@ function getAllMappedChannel_ids(channel_id){
 
 
     $("#message_files_form").submit(function(e) {
-        alert('message file form');
+        <!--alert('message file form');-->
         var form = $(this);
         var url = form.attr('action');
         $.ajax({
@@ -841,8 +841,8 @@ function getAllMappedChannel_ids(channel_id){
                    $("#proposalList").empty();
                    $('#proposal_campaign_name').append('<option value=""></option>');
                    jQuery.each(data.results, function(i, val) {
-                        alert(val.campaign_name);
-                        alert(val.status);
+                        <!--alert(val.campaign_name);-->
+                        <!--alert(val.status);-->
                         {% if  glob.from_email_id != session['email_id']  %}
                             if(val.status == 'Proposal Sent'){
                                 var status = 'Proposal Received';
@@ -894,7 +894,7 @@ function getAllMappedChannel_ids(channel_id){
         $("#proposal_arrangements").empty();
         $("#proposal_kpis").empty();
         var campaign_id = $("#proposal_campaign_name").val();
-        alert(campaign_id);
+        <!--alert(campaign_id);-->
         $.ajax({
                type: "GET",
                url: '/getCampaignDetails/'+campaign_id,
