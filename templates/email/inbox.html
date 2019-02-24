@@ -142,7 +142,7 @@
                             {% if glob.message_id %}
                             {% if  glob.from_email_id == session['email_id']  %}
                             <span data-toggle="modal" data-target="#campaignList">
-                                <a class=" btn btn-outline-primary btn-sm" onclick="campaignList('{{ glob.channel_id }}')">Add campaign</a>
+                                <a class=" btn btn-outline-primary btn-sm" onclick="campaignList('{{ glob.channel_id }}','{{ glob.message_id }}')">Add campaign</a>
                             </span>
                             <!--<a class="btn-info btn-sm"  id="getCampaignsAddedToMessage">View campaign</a>-->
                             {% endif %}
@@ -460,6 +460,55 @@
   </div>
 </div>
 
+<div class="modal fade" id="editProposal" role="dialog" data-backdrop="false">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header alert-primary">
+        <b class="modal-title">Edit Proposal</b>
+        <button  type="button" class="close" data-dismiss="modal">&times;</button>
+      </div>
+      <form name="update_proposal_form" id="update_proposal_form" action="/updateProposal" method="POST">
+        <div class="modal-body">
+          <input type="hidden" name="message_id" value="{{ glob.message_id }}">
+            <input type="hidden" name="channel_id" value="{{ glob.channel_id }}">
+            <input type="hidden" name="influencer_id" value="">
+            <!--<div>message id = {{ glob.message_id }} Channel id = {{ glob.channel_id }}</div>-->
+
+            <div id="edit_proposal_campaign_name"></div>
+
+
+            <div id="edit_proposal_description"></div>
+
+
+            <div id="edit_proposal_from_date"></div>
+
+
+            <div id="edit_proposal_to_date"></div>
+
+
+            <div id="edit_proposal_channels"></div>
+
+
+            <div id="edit_proposal_target_url">Target URL : </div>
+
+            <div id="edit_proposal_arrangements">Arrangements : </div>
+
+            <div id="edit_proposal_kpis">Kpis : </div>
+
+            <div id="edit_proposal_price">Price : </div>
+
+
+        </div>
+        <div class="modal-footer">
+          <button type="submit" id="updateProposal" class="btn btn-default">Update</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
+
 <script>
 
 function getMessageFiles(message_id){
@@ -612,35 +661,94 @@ function getProposal(message_id,campaign_id){
 
     }
 
+
+function editProposal(message_id,campaign_id){
+
+    <!--alert(campaign_id);-->
+    <!--alert(message_id);-->
+
+        $.ajax({
+               type: "GET",
+               url: '/getProposal/'+message_id+'/'+campaign_id,
+               success: function(data)
+               {
+                   <!--alert(data); // show response from the python script.-->
+                   jQuery.each(data.results, function(i, val) {
+                        <!--alert(val.campaign_name);-->
+                        $('#edit_proposal_campaign_name').empty();
+                        $('#edit_proposal_campaign_name').append('Campaign Name : '+val.campaign_name);
+                        $('#edit_proposal_description').empty();
+                        $('#edit_proposal_description').append('Description : '+val.proposal_description);
+                        $('#edit_proposal_from_date').empty();
+                        $('#edit_proposal_from_date').append('From Date : '+val.proposal_from_date);
+                        $('#edit_proposal_to_date').empty();
+                        $('#edit_proposal_to_date').append('To Date : '+val.proposal_to_date);
+                        $('#edit_proposal_channels').empty();
+                        $('#edit_proposal_channels').append('Channels : '+val.proposal_channels);
+                        $('#edit_proposal_arrangements').empty();
+                        $('#edit_proposal_arrangements').append('Arrangements : '+val.proposal_arrangements);
+                        $('#edit_proposal_kpis').empty();
+                        $('#edit_proposal_kpis').append('Kpis : '+val.proposal_kpis);
+                        $('#edit_proposal_price').empty();
+                        $('#edit_proposal_price').append('Price : '+val.proposal_price+' '+val.currency);
+                        $('#edit_proposal_target_url').empty();
+                        $('#edit_proposal_target_url').append('Target Url : '+val.target_url);
+
+                        $('#editProposal').modal('show');
+
+                   });
+
+               }
+             });
+
+    }
+
+
+
 function replyMessage(from_email_id,subject) {
     <!--alert(channel_id);-->
     $("#to_email_id").val(from_email_id);
     $("#subject").val(subject);
 }
 
-function campaignList(channel_id) {
+function campaignList(channel_id,message_id) {
     <!--alert('i m in campaignList');-->
     <!--alert(channel_id);-->
     $( "input#campaign_id" ).prop('checked', false);
-    $( "input#campaign_id" ).prop('disabled', false)
+    $( "input#campaign_id" ).prop('disabled', false);
     $("#campaign_channel_id").val(channel_id);
-    <!--var campaign_ids = getCampaign_ids(channel_id);-->
-    <!--alert(campaign_ids);-->
-    {% for item in view_campaign_data['data'] %}
-        {% for item1 in item['youtube_inf_data'] %}
-            var campaign_channel_id = "{{ item1['channel_id'] }}";
-            var campaign_id = "{{ item['campaign_id'] }}";
+    $.ajax({
+               type: "GET",
+               url: '/getCampaignsAddedToMessage/'+message_id,
+               contentType: 'application/json;charset=UTF-8',
+               success: function(data)
+               {
 
-            if (channel_id == campaign_channel_id){
-                <!--alert("equal");-->
-                $('.campaign_id'+campaign_id).attr('disabled', true);
-             }
-             else{
-                 <!--alert("not equal");-->
-                  <!--$('.campaign_id'+campaign_id).attr('disabled', false);-->
-             }
-        {% endfor %}
-    {% endfor %}
+                   if (data.results.length != 0){
+                   jQuery.each(data.results, function(i, val) {
+                        <!--alert(val.campaign_id);-->
+                        <!--alert(val.status);-->
+                        {% for item in view_campaign_data['data'] %}
+                                var campaign_campaign_id = val.campaign_id;
+                                var campaign_id = "{{ item['campaign_id'] }}";
+                                if (campaign_id == campaign_campaign_id){
+                                    <!--alert("equal");-->
+                                    $('.campaign_id'+campaign_id).attr('disabled', true);
+                                 }
+                                 else{
+                                     <!--alert("not equal");-->
+                                      <!--$('.campaign_id'+campaign_id).attr('disabled', false);-->
+                                 }
+
+                        {% endfor %}
+                    });
+                    }
+                    else{
+
+                    }
+                    }
+                });
+
 }
 
 
@@ -689,12 +797,12 @@ function getAllMappedChannel_ids(channel_id){
                             if(val.youtube_channel_id){
                                 <!--$( '#youtube_channel_id').val(val.youtube_channel_id);-->
                                 <!--$( '#youtube_channel_id').val('youtube');-->
-                                $("#proposal_channels").append('<input multiple type ="checkbox" name="proposal_channels" value="youtube@'+val.youtube_channel_id+'"><span data-toggle="tooltip" title="'+val.youtube_first_name+'"><a target="_blank" href="https://www.youtube.com/channel/'+val.youtube_channel_id+'" class="fa fa-youtube red"></a></span>');
+                                $("#proposal_channels").append('<input class="proposal_channels_checkbox" checked multiple type ="checkbox" name="proposal_channels" value="youtube@'+val.youtube_channel_id+'"><span data-toggle="tooltip" title="'+val.youtube_first_name+'"><a target="_blank" href="https://www.youtube.com/channel/'+val.youtube_channel_id+'" class="fa fa-youtube red"></a></span>');
                             }
                             if(val.twitter_channel_id){
                                 <!--$( '#twitter_channel_id').val(val.twitter_channel_id);-->
                                 <!--$( '#twitter_channel_id').val('twitter');-->
-                                $("#proposal_channels").append('<input multiple type ="checkbox" name="proposal_channels" value="twitter@'+val.twitter_channel_id+'"><span data-toggle="tooltip" title="'+val.twitter_first_name+'"><a href="#" class="fa fa-twitter"></span></a>');
+                                $("#proposal_channels").append('<input class="proposal_channels_checkbox" checked multiple type ="checkbox" name="proposal_channels" value="twitter@'+val.twitter_channel_id+'"><span data-toggle="tooltip" title="'+val.twitter_first_name+'"><a href="#" class="fa fa-twitter"></span></a>');
                             }
 
                     });
@@ -800,7 +908,36 @@ function getAllMappedChannel_ids(channel_id){
 
 
     $("#sent_proposal_form").submit(function(e) {
-        <!--alert('i m here');-->
+        <!--alert('i m before');-->
+
+                var proposal_channels_boxes = $('.proposal_channels_checkbox:checkbox');
+                if(proposal_channels_boxes.length > 0) {
+                    if( $('.proposal_channels_checkbox:checkbox:checked').length < 1) {
+                        alert('Please select at least one Channel');
+                        proposal_channels_boxes[0].focus();
+                        return false;
+                    }
+                }
+                var proposal_arrangements_boxes = $('.proposal_arrangements_checkbox:checkbox');
+                if(proposal_arrangements_boxes.length > 0) {
+                    if( $('.proposal_arrangements_checkbox:checkbox:checked').length < 1) {
+                        alert('Please select at least one Arrangement');
+                        proposal_arrangements_boxes[0].focus();
+                        return false;
+                    }
+                }
+
+                var proposal_kpis_boxes = $('.proposal_kpis_checkbox:checkbox');
+                if(proposal_kpis_boxes.length > 0) {
+                    if( $('.proposal_kpis_checkbox:checkbox:checked').length < 1) {
+                        alert('Please select at least one Kpi');
+                        proposal_kpis_boxes[0].focus();
+                        return false;
+                    }
+                }
+
+
+        <!--alert('i m after');-->
         var form = $(this);
         var url = form.attr('action');
         $.ajax({
@@ -861,14 +998,19 @@ function getAllMappedChannel_ids(channel_id){
                         {% else %}
                             $('#campaignNameList').append('<tr><td><a href="#" class="btn-info btn-sm">'+val.campaign_name+'<a/></td><td>'+val.status+'</td></tr>');
                             if(val.status == 'Proposal Sent'){
-                                $('#proposalList').append('<tr><td><a href="#" onclick="getProposal('+val.message_id+','+val.campaign_id+')" class="btn-info btn-sm">'+val.campaign_name+'<a/></td></tr>');
+                                $('#proposalList').append('<tr><td><a href="#" onclick="getProposal('+val.message_id+','+val.campaign_id+')" class="btn-info btn-sm">'+val.campaign_name+'<a/></td><td><a href="#" onclick="editProposal('+val.message_id+','+val.campaign_id+')" data-toggle="tooltip" title="Edit Proposal"><img src="/static/icons/edit.png" height="19px" width="17px"></a></td></tr>');
                             }
                             if(val.status == 'Current Partner'){
 
-                                $('#proposalList').append('<tr><td><a href="#" onclick="getProposal('+val.message_id+','+val.campaign_id+')" class="btn-info btn-sm">'+val.campaign_name+'<a/></td></tr>');
+                                $('#proposalList').append('<tr><td><a href="#" onclick="getProposal('+val.message_id+','+val.campaign_id+')" class="btn-info btn-sm">'+val.campaign_name+'<a/></td><td><a href="#" onclick="editProposal('+val.message_id+','+val.campaign_id+')" data-toggle="tooltip" title="Edit Proposal"><img src="/static/icons/edit.png" height="19px" width="17px"></a></td></tr>');
                             }
                         {% endif %}
-                        $('#proposal_campaign_name').append('<option value="'+val.campaign_id+'">'+val.campaign_name+'</option>');
+                        if(val.status!="Proposal Sent" && val.status!="Current Partner"){
+                            $('#proposal_campaign_name').append('<option value="'+val.campaign_id+'">'+val.campaign_name+'</option>');
+                        }
+                        <!--else if(val.status != "Current Partner" ){-->
+                            <!--$('#proposal_campaign_name').append('<option value="'+val.campaign_id+'">'+val.campaign_name+'</option>');-->
+                        <!--}-->
                     });
 
                }
@@ -911,11 +1053,11 @@ function getAllMappedChannel_ids(channel_id){
                        $("#proposal_target_url").val(val.target_url);
                        var arrangements = val.arrangements.split(",");
                        for(i=0;i<arrangements.length;i++){
-                           $("#proposal_arrangements").append('<input multiple type ="checkbox" name="proposal_arrangements" value="'+arrangements[i]+'">'+arrangements[i]);
+                           $("#proposal_arrangements").append('<input checked class="proposal_arrangements_checkbox" multiple type ="checkbox" name="proposal_arrangements" value="'+arrangements[i]+'">'+arrangements[i]);
                        }
                        var kpis = val.kpis.split(",");
                        for(i=0;i<kpis.length;i++){
-                           $("#proposal_kpis").append('<input multiple type ="checkbox" name="proposal_kpis" value="'+kpis[i]+'">'+kpis[i]);
+                           $("#proposal_kpis").append('<input checked class="proposal_kpis_checkbox" multiple type ="checkbox" name="proposal_kpis" value="'+kpis[i]+'">'+kpis[i]);
                        }
 
                    });
