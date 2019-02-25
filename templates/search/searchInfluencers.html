@@ -152,7 +152,7 @@
             <div class="col-xl-4 col-lg-4 col-md-4 mb-1" >
               <div class="form-group">
                 <div class="form-group" style="margin-left:12%;">
-                  <select class="form-control" name="sort_order" placeholder="Sort" style="width:140px;">
+                  <select class="form-control" id="sort" name="sort_order" placeholder="Sort" style="width:140px;">
                     <option value=""></option>
                     {% if form_filters['sort_order'] %}
                     <option value="{{ form_filters['sort_order'] }}" disabled>{{ form_filters['sort_order'] }}</option>
@@ -821,6 +821,12 @@ function updateChannelStatusForCampaignByCampaignId(campaign_id){
 
 <script>
   $(document).ready(function () {
+
+      $('#sort').on('change', function() {
+      $('#btn-search-inf').click();
+  });
+
+
         $("#add_influencer_to_campaign").submit(function(e) {
         var form = $(this);
         var url = form.attr('action');
