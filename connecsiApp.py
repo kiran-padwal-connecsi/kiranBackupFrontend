@@ -1540,6 +1540,43 @@ def sendProposal():
            pass
            return  'Server Error'
 
+
+@connecsiApp.route('/updateProposal',methods = ['POST'])
+@is_logged_in
+def updateProposal():
+    if request.method == 'POST':
+       payload = request.form.to_dict()
+       # payload.update({'from_email_id': session['email_id']})
+       # date = datetime.datetime.now().strftime("%A, %d. %B %Y %I:%M%p")
+       proposal_arrangements = request.form.getlist('edit_proposal_arrangements')
+       proposal_arrangements_string = ','.join(proposal_arrangements)
+       print(proposal_arrangements_string)
+       payload.update({'edit_proposal_arrangements':proposal_arrangements_string})
+
+       proposal_kpis = request.form.getlist('edit_proposal_kpis')
+       proposal_kpis_string = ','.join(proposal_kpis)
+       print(proposal_kpis_string)
+       payload.update({'edit_proposal_kpis': proposal_kpis_string})
+
+       proposal_channels = request.form.getlist('edit_proposal_channels')
+       proposal_channels_string = ','.join(proposal_channels)
+       print(proposal_channels_string)
+       payload.update({'edit_proposal_channels': proposal_channels_string})
+
+       print(payload)
+       proposal_id = request.form.get('proposal_id')
+       url = base_url + 'Brand/Proposal/get/' + str(proposal_id)
+       print(url)
+       # exit()
+       try:
+           response = requests.put(url=url, json=payload)
+           data = response.json()
+           print(data)
+           return 'Proposal updated'
+       except:
+           pass
+           return  'Server Error'
+
 @connecsiApp.route('/getProposal/<string:message_id>/<string:campaign_id>',methods=['GET'])
 @is_logged_in
 def getProposal(message_id,campaign_id):
