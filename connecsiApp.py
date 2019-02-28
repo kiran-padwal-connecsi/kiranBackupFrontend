@@ -219,7 +219,31 @@ def login():
 @is_logged_in
 def admin():
     title='Dashboard'
-    return render_template('index.html',title=title)
+    top10Inf_url = base_url + 'Youtube/top10Influencers'
+
+    try:
+        response = requests.get(top10Inf_url)
+        # print(response.json())
+        top10Inf = response.json()
+        # print(top10Inf)
+        for item in top10Inf['data']:
+            # print(item)
+            # print(item['channel_id'])
+            total_videos_url = base_url + 'Youtube/totalVideos/'+str(item['channel_id'])
+            try:
+                response = requests.get(total_videos_url)
+                total_videos = response.json()
+                # print(total_videos)
+                for item1 in total_videos['data']:
+                    # print(item1)
+                    item.update(item1)
+
+            except:pass
+            print(item)
+        return render_template('index.html', title=title, top10Inf=top10Inf)
+    except Exception as e:
+        print(e)
+
 #
 #
 @connecsiApp.route('/profileView')
@@ -423,6 +447,15 @@ def searchInfluencers():
                # print(item)
                 linechart_id+=1
             exportCsv(data=data)
+            for item in data['data']:
+                total_videos_url = base_url + 'Youtube/totalVideos/' + str(item['channel_id'])
+                try:
+                    response = requests.get(total_videos_url)
+                    total_videos = response.json()
+                    for item1 in total_videos['data']:
+                        item.update(item1)
+                except:
+                    pass
             return render_template('search/searchInfluencers.html', regionCodes=regionCodes_json,
                                    lookup_string=lookup_string, form_filters=form_filters,data=data,view_campaign_data=view_campaign_data
                                    ,favInfList_data=favInfList_data,payload_form_filter=payload)
@@ -461,6 +494,15 @@ def searchInfluencers():
             pass
 
         exportCsv(data=data)
+        for item in data['data']:
+            total_videos_url = base_url + 'Youtube/totalVideos/' + str(item['channel_id'])
+            try:
+                response = requests.get(total_videos_url)
+                total_videos = response.json()
+                for item1 in total_videos['data']:
+                    item.update(item1)
+            except:
+                pass
         return render_template('search/searchInfluencers.html', regionCodes=regionCodes_json,
                                lookup_string=lookup_string,form_filters=form_filters,data=data,pagination='',view_campaign_data=view_campaign_data,
                                favInfList_data=favInfList_data,payload_form_filter=payload)

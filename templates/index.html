@@ -150,67 +150,37 @@
                                     <td scope="col"></td>
                                     <td scope="col">Influencers</td>
                                     <td scope="col">Channels</td>
-                                    <td scope="col">Engagemnets</td>
+                                    <td scope="col">Engagements</td>
                                 </tr>
+                                {% for item in top10Inf['data'] %}
                                 <tr>
-                                    <th scope="row">1</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew Dew Pie </td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>25%</td>
+                                    <th scope="row">{{loop.index}}</th>
+                                    <td><img src="{{item['channel_img']}}" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">{{item['title']}}</td>
+                                    <td>
+                                        <a href="#" class="fa fa-youtube" style="color:#9E57DD;"></a>
+                                        {% if item['facebook_url'] %}
+                                        <a href="#" class="fa fa-facebook" style="color:#9E57DD;"></a>
+                                        {% endif %}
+                                        {% if item['twitter_url'] %}
+                                        <a href="#" class="fa fa-twitter" style="color:#9E57DD;"></a>
+                                        {% endif %}
+                                        {% if item['insta_url'] %}
+                                        <a href="#" class="fa fa-instagram" style="color:#9E57DD;"></a>
+                                        {% endif %}
+                                    </td>
+                                    <td>
+                                        {% set total = (item['total_100video_likes'] + item['total_100video_comments'] + item['total_100video_shares'])%}
+                                        <!--{{ total }} <br>-->
+                                        {% set total = (total/item['total_videos'])|round|int %}
+                                        <!--{{ total }} <br>-->
+                                        {% set total = (total/item['subscriberCount_gained']) %}
+                                        {% set total = total|round(4, 'floor')*100 %}
+                                        {% set total = total|round(2, 'floor') %}
+                                        {{ total }}
+                                    </td>
                                 </tr>
-                                <tr>
-                                    <th scope="row">2</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">T Series </td>
-                                    <td><a href="#" class="fa fa-youtube"></a></td>
-                                    <td>23%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">3</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew Dew Pie </td>
-                                    <td><a href="#" class="fa fa-twitter blue"></a></td>
-                                    <td>14%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">4</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew De2 </td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>13%</td>
-                                </tr> <tr>
-                                    <th scope="row">5</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew Dew Pie </td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>12.5%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">6</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Dew Pie </td>
-                                    <td><a href="#" class="fa fa-facebook blue"></a></td>
-                                    <td>12%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">7</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew Pie </td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>11%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">8</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Tseries</td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>9%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">9</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew Pie </td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>8%</td>
-                                </tr>
-                                <tr>
-                                    <th scope="row">10</th>
-                                    <td><img src="static/app-assets/img/portrait/avatars/avatar-08.png" class="rounded-circle img-border gradient-summer" height="42" width="42" alt="Card image">Pew Dew Pie </td>
-                                    <td><a href="#" class="fa fa-youtube red"></a></td>
-                                    <td>5%</td>
-                                </tr>
+                                {% endfor %}
+
                                 </tbody>
                             </table>
                         </div>
