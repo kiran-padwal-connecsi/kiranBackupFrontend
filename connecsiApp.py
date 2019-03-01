@@ -463,7 +463,7 @@ def searchInfluencers():
             print(e)
             print('i m hee')
             return render_template('search/searchInfluencers.html', regionCodes=regionCodes_json,
-                               lookup_string=lookup_string,form_filters=form_filters,data='',pagination='',view_campaign_data=view_campaign_data
+                               lookup_string=lookup_string,form_filters=form_filters,data=data,view_campaign_data=view_campaign_data
                                    ,favInfList_data=favInfList_data,payload_form_filter=payload)
 
 

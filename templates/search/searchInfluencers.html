@@ -172,8 +172,10 @@
           </div>
           </form>
           <div class="container contents" id="wrapper">
+            {% if data['data'] %}
             {% for item in data['data'] %}
             {% set _ = glob.update({'total_rows':item['total_rows']}) %}
+
             <div class="lazy">
               <div class="row">
                 <div>
@@ -210,6 +212,7 @@
                         <table width="400px" cellpadding="1">
                           <tr>
                             <td colspan="2"><b style="font-size:15px;"><a href="https://www.youtube.com/channel/{{ item['channel_id'] }}" target="_blank">{{ item['title'] }}</a></b> <i class="fa fa-youtube font-medium-3 " style="color:#9E57DD;"></i>&nbsp;&nbsp;<div class="float-right">
+                              {% if item['total_videos'] %}
                               {% set total = (item['total_100video_likes'] + item['total_100video_comments'] + item['total_100video_shares'])%}
                                         <!--{{ total }} <br>-->
                                         {% set total = (total/item['total_videos'])|round|int %}
@@ -218,6 +221,7 @@
                                         {% set total = total|round(4, 'floor')*100 %}
                                         {% set total = total|round(2, 'floor') %}
                                         Eng Rate : {{ total }}
+                              {% endif %}
                             </div>
                             </td>
                           </tr>
@@ -309,10 +313,13 @@
             </div>
             <br>
             {% endfor %}
+            {% endif %}
             <div class="row" id="pagination">
 
               <!--{{ glob.total_rows }}-->
               <!--{{ payload_form_filter }}-->
+              {% if glob.total_rows %}
+
               {% set pages = ((glob.total_rows)/20)|round|int %}
               <!--{{ pages }}-->
               {% set _ = glob.update({'offset':0}) %}
@@ -350,7 +357,7 @@
 
 
                 Page {{glob.current_page}} of {{ pages }}
-
+            {% endif %}
             </div>
 
 
