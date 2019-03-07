@@ -56,12 +56,17 @@
                         <div class="form-group" >
                           <select class="form-control" name="channel" style="height:35px;">
                             {% if form_filters['channel'] %}
-                            <option value="{{ form_filters['channel'] }}">{{ form_filters['channel'] }}</option>
+                            <script>
+                              $(document).ready(function(){
+                                $("#{{form_filters['channel']}}").attr("selected","selected");
+                              });
+                            </script>
+                            <!--<option value="{{ form_filters['channel'] }}">{{ form_filters['channel'] }}</option>-->
                             {% endif %}
-                            <option value="Youtube">Youtube</option>
-                            <option value="Twitter">Twitter</option>
-                            <option value="Facebook">Facebook</option>
-                            <option value="Instagram">Instagram</option>
+                            <option id="Youtube" value="Youtube">Youtube</option>
+                            <option id="Twitter" value="Twitter">Twitter</option>
+                            <option value="Facebook" disabled>Facebook</option>
+                            <option value="Instagram" disabled>Instagram</option>
                           </select>
                         </div>
                       </div>
@@ -211,7 +216,16 @@
                       <td colspan="2" style="border-right: solid 1px #E1DEDD;">
                         <table width="400px" cellpadding="1">
                           <tr>
-                            <td colspan="2"><b style="font-size:15px;"><a href="https://www.youtube.com/channel/{{ item['channel_id'] }}" target="_blank">{{ item['title'] }}</a></b> <i class="fa fa-youtube font-medium-3 " style="color:#9E57DD;"></i>&nbsp;&nbsp;<div class="float-right">
+                            <td colspan="2"><b style="font-size:15px;">
+                              {% if form_filters['channel']=='Youtube' %}
+                              <a href="https://www.youtube.com/channel/{{ item['channel_id'] }}" target="_blank">{{ item['title'] }}</a>
+                              </b> <i class="fa fa-youtube font-medium-3 " style="color:#9E57DD;"></i>
+                              {% elif form_filters['channel']=='Twitter' %}
+                              <a href="https://www.twitter.com/{{ item['screen_name'] }}" target="_blank">{{ item['title'] }}</a>
+                              </b> <i class="fa fa-twitter font-medium-3 " style="color:#9E57DD;"></i>
+                              {% endif %}
+                            &nbsp;&nbsp;
+                              <div class="float-right">
                               {% if item['total_videos'] %}
                               {% set total = (item['total_100video_likes'] + item['total_100video_comments'] + item['total_100video_shares'])%}
                                         <!--{{ total }} <br>-->
@@ -234,19 +248,31 @@
                             <td style="text-align:center;border-bottom:solid 1px #E1DEDD; border-top:solid 1px #E1DEDD;  font-size:14px;">
                               <b>{{ (item['total_100video_likes']/100)|int }}</b>
                               <br>
+                              {% if form_filters['channel'] == 'Youtube' %}
                               Avg Likes/ video
+                              {% elif form_filters['channel'] == 'Twitter' %}
+                              Avg Likes/ post
+                              {% endif %}
                             </td>
                           </tr>
                           <tr>
                             <td style="text-align:center;border-right: solid 1px #E1DEDD; border-bottom:solid 1px #E1DEDD;  font-size:14px;">
                               <b>{{ (item['total_100video_views']/100)|int }}</b>
                               <br>
+                              {% if form_filters['channel'] == 'Youtube' %}
                               Avg Views/ video
+                              {% elif form_filters['channel'] == 'Twitter' %}
+                              Avg Views/ post
+                              {% endif %}
                             </td>
                             <td style="text-align:center;font-size:14px;">
                               <b>{{ (item['total_100video_comments']/100)|int }}</b>
                               <br>
+                              {% if form_filters['channel'] == 'Youtube' %}
                               Avg Comments/ video
+                              {% elif form_filters['channel'] == 'Twitter' %}
+                              Avg Comments/ post
+                              {% endif %}
                             </td>
                           </tr>
                           <tr><td colspan="2">
