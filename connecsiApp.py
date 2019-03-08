@@ -2615,7 +2615,7 @@ def inf_editProfile():
     except Exception as e:
         print(e)
 
-    return render_template('user/inf_editProfile.html',data=profile_data,videoCat=videoCat_json,regionCodes=regionCodes_json)
+    return render_template('user/inf_editprofile.html',data=profile_data,videoCat=videoCat_json,regionCodes=regionCodes_json)
 
 @connecsiApp.route('/updateProfile_inf',methods=['POST'])
 @is_logged_in
