@@ -15,10 +15,16 @@ from flask import Flask, render_template, flash, redirect, url_for, session, req
 import os
 # from flask_paginate import Pagination, get_page_parameter
 from flask_uploads import UploadSet, configure_uploads, IMAGES
+from configparser import ConfigParser
 
 connecsiApp = Flask(__name__)
 connecsiApp.secret_key = 'connecsiSecretKey'
-base_url = 'https://kiranpadwaltestconnecsi.pythonanywhere.com/Apis/'
+config = ConfigParser()
+dir_path = os.path.dirname(os.path.realpath(__file__))
+# ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+config.read(dir_path+'/config.ini')
+base_url = config.get('auth', 'base_url')
+# base_url = 'https://kiranpadwaltestconnecsi.pythonanywhere.com/Apis/'
 
 
 
