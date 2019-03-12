@@ -2426,7 +2426,7 @@ from flask_dance.contrib.google import make_google_blueprint, google
 from flask_dance.contrib.twitter import make_twitter_blueprint, twitter
 
 os.environ['OAUTHLIB_INSECURE_TRANSPORT'] = '1'
-os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '0'
+os.environ['OAUTHLIB_RELAX_TOKEN_SCOPE'] = '1'
 # os.environ['WERKZEUG_RUN_MAIN'] = 'true'
 
 
@@ -2434,7 +2434,7 @@ google_blueprint = make_google_blueprint(
     client_id="413672402805-dvv0v7bft07iqhj2du2eqq59itbeqcv1.apps.googleusercontent.com",
     client_secret="wNxRXqxGrz7inj2yE2nlgcyO",
     scope=[
-        "https://www.googleapis.com/auth/plus.me",
+        # "https://www.googleapis.com/auth/plus.me",
         "https://www.googleapis.com/auth/userinfo.email",
         "https://www.googleapis.com/auth/youtube.readonly"
     ],
