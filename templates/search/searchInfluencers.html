@@ -277,15 +277,28 @@
                             </td>
                           </tr>
                           <tr><td colspan="2">
-                            <b style="font-size:12px">Other Channels</b> &emsp;
-                            {% if item['facebook_url'] %}
-                            <a href="{{ item['facebook_url'] }}" target="_blank" class="fa fa-facebook-official " style="font-size:20px;color:#9E57DD;"></a>&emsp;
-                            {% endif %}
-                            {% if item['insta_url'] %}
-                            <a href="{{ item['insta_url'] }}" target="_blank" class="fa fa-instagram " style="font-size:20px; color:#9E57DD;"></a>&emsp;
-                            {% endif %}
-                            {% if item['twitter_url'] %}
-                            <a href="{{ item['twitter_url'] }}" target="_blank" class="fa fa-twitter " style="font-size:20px;color:#9E57DD;"></a>&emsp;
+                            <b style="font-size:12px">Other Channels</b>
+                            {% if form_filters['channel'] == 'Youtube' %}
+                              {% if item['facebook_url'] %}
+                              <a href="{{ item['facebook_url'] }}" target="_blank" class="fa fa-facebook-official " style="font-size:20px;color:#9E57DD;"></a>&emsp;
+                              {% endif %}
+                              {% if item['insta_url'] %}
+                              <a href="{{ item['insta_url'] }}" target="_blank" class="fa fa-instagram " style="font-size:20px; color:#9E57DD;"></a>&emsp;
+                              {% endif %}
+                              {% if item['twitter_url'] %}
+                              <a href="{{ item['twitter_url'] }}" target="_blank" class="fa fa-twitter " style="font-size:20px;color:#9E57DD;"></a>&emsp;
+                              {% endif %}
+
+                            {% elif form_filters['channel'] == 'Twitter' %}
+                              {% if item['facebook_url'] %}
+                              <a href="{{ item['facebook_url'] }}" target="_blank" class="fa fa-facebook-official " style="font-size:20px;color:#9E57DD;"></a>&emsp;
+                              {% endif %}
+                              {% if item['insta_url'] %}
+                              <a href="{{ item['insta_url'] }}" target="_blank" class="fa fa-instagram " style="font-size:20px; color:#9E57DD;"></a>&emsp;
+                              {% endif %}
+                              {% if item['youtube_url'] %}
+                              <a href="{{ item['youtube_url'] }}" target="_blank" class="fa fa-youtube " style="font-size:20px;color:#9E57DD;"></a>&emsp;
+                              {% endif %}
                             {% endif %}
                           </td></tr>
                         </table>
