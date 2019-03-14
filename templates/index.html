@@ -169,6 +169,7 @@
                                         {% endif %}
                                     </td>
                                     <td>
+                                        {% if item['total_videos'] %}
                                         {% set total = (item['total_100video_likes'] + item['total_100video_comments'] + item['total_100video_shares'])%}
                                         <!--{{ total }} <br>-->
                                         {% set total = (total/item['total_videos'])|round|int %}
@@ -177,6 +178,7 @@
                                         {% set total = total|round(4, 'floor')*100 %}
                                         {% set total = total|round(2, 'floor') %}
                                         {{ total }}
+                                        {% endif %}
                                     </td>
                                 </tr>
                                 {% endfor %}
