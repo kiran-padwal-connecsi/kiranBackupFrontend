@@ -257,21 +257,21 @@
                           </tr>
                           <tr>
                             <td style="text-align:center;border-right: solid 1px #E1DEDD; border-bottom:solid 1px #E1DEDD;  font-size:14px;">
+                              {% if form_filters['channel'] == 'Youtube' %}
                               <b>{{ (item['total_100video_views']/100)|int }}</b>
                               <br>
-                              {% if form_filters['channel'] == 'Youtube' %}
                               Avg Views/ video
                               {% elif form_filters['channel'] == 'Twitter' %}
-                              Avg Views/ post
+                              <b>{{ (item['total_100video_shares']/100)|int }}</b>
+                              Avg Retweets/ post
                               {% endif %}
                             </td>
                             <td style="text-align:center;font-size:14px;">
+                              {% if form_filters['channel'] == 'Youtube' %}
                               <b>{{ (item['total_100video_comments']/100)|int }}</b>
                               <br>
-                              {% if form_filters['channel'] == 'Youtube' %}
                               Avg Comments/ video
                               {% elif form_filters['channel'] == 'Twitter' %}
-                              Avg Comments/ post
                               {% endif %}
                             </td>
                           </tr>
