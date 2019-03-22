@@ -697,7 +697,8 @@ def updateCampaign():
             payload.update({'is_classified_post':'TRUE'})
             print('payload inside if =',payload)
             for file in files:
-                brands_classified_files.save(file)
+                # brands_classified_files.save(file)
+                campaign_files.save(file)
             user_id = session['user_id']
             classified_url = base_url + 'Classified/' + str(user_id)
             print(classified_url)
@@ -1029,7 +1030,8 @@ def saveCampaign():
             payload.update({'is_classified_post':'TRUE'})
             print('payload inside if =',payload)
             for file in files:
-                brands_classified_files.save(file)
+                # brands_classified_files.save(file)
+                campaign_files.save(file)
             user_id = session['user_id']
             classified_url = base_url + 'Classified/' + str(user_id)
             print(classified_url)
@@ -1945,7 +1947,8 @@ def saveClassified():
         # exit()
         filenames = []
         for file in files:
-            filename = brands_classified_files.save(file)
+            # filename = brands_classified_files.save(file)
+            filename = campaign_files.save(file)
             print(filename)
             filenames.append(filename)
         filenames_string = ','.join(filenames)
@@ -2077,7 +2080,8 @@ def updateClassified():
         # exit()
         filenames=[]
         for file in files:
-            filename = brands_classified_files.save(file)
+            # filename = brands_classified_files.save(file)
+            filename = campaign_files.save(file)
             filenames.append(filename)
 
 

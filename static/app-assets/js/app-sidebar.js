@@ -126,6 +126,7 @@
 
     $('.nav-toggle').on('click',function(){
         var $this = $(this),
+//        alert($this);
         toggle_icon= $this.find('.toggle-icon'),
         toggle = toggle_icon.attr('data-toggle');
         compact_menu_checkbox = $('.cz-compact-menu');
@@ -225,7 +226,7 @@
         $sidebar.addClass('hide-sidebar');
     });
 
-    $('.noti-list').perfectScrollbar();
+//    $('.noti-list').perfectScrollbar();
 
 
     // Page full screen
