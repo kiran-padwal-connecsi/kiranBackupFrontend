@@ -65,8 +65,8 @@
                             {% endif %}
                             <option id="Youtube" value="Youtube">Youtube</option>
                             <option id="Twitter" value="Twitter">Twitter</option>
+                            <option id="Instagram" value="Instagram">Instagram</option>
                             <option value="Facebook" disabled>Facebook</option>
-                            <option value="Instagram" disabled>Instagram</option>
                           </select>
                         </div>
                       </div>
@@ -223,6 +223,9 @@
                               {% elif form_filters['channel']=='Twitter' %}
                               <a href="https://www.twitter.com/{{ item['screen_name'] }}" target="_blank">{{ item['title'] }}</a>
                               </b> <i class="fa fa-twitter font-medium-3 " style="color:#9E57DD;"></i>
+                              {% elif form_filters['channel']=='Instagram' %}
+                              <a href="https://www.instagram.com/{{ item['username'] }}" target="_blank">{{ item['username'] }}</a>
+                              </b> <i class="fa fa-instagram font-medium-3 " style="color:#9E57DD;"></i>
                               {% endif %}
                             &nbsp;&nbsp;
                               <div class="float-right">
@@ -252,6 +255,8 @@
                               Avg Likes/ video
                               {% elif form_filters['channel'] == 'Twitter' %}
                               Avg Likes/ post
+                              {% elif form_filters['channel'] == 'Instagram' %}
+                              Avg Likes/ post
                               {% endif %}
                             </td>
                           </tr>
@@ -273,6 +278,10 @@
                               <br>
                               Avg Comments/ video
                               {% elif form_filters['channel'] == 'Twitter' %}
+                              {% elif form_filters['channel'] == 'Instagram' %}
+                              <b>{{ (item['total_100video_comments']/100)|int }}</b>
+                              <br>
+                              Avg Comments/ post
                               {% endif %}
                             </td>
                           </tr>
